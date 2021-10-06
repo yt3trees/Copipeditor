@@ -1,0 +1,1 @@
+certutil -encode copytool.gif copytool.txt

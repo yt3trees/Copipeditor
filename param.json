@@ -1,0 +1,13 @@
+{
+    "logFolder": "C:/work/dev/python/テスト/!bk",
+    "0": {
+        "id": "あああasdf",
+        "from": "C:/work/dev/python/テスト/test/from",
+        "to": "C:/work/dev/python/テスト/test/to"
+    },
+    "1": {
+        "id": "いいい",
+        "from": "C:\\work\\dev\\python\\テスト\\test - コピー",
+        "to": "C:\\work\\dev\\python\\テスト\\test - コピー\\to"
+    }
+}

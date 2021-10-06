@@ -1,0 +1,1 @@
+powershell Start-Process -Verb runas -FilePath powershell -ArgumentList @('-executionpolicy bypass','-noexit','-file """%~0\..\スタートメニューに追加.ps1"""')
