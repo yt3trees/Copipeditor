@@ -44,17 +44,22 @@ class Application(tk.Frame):
         self.create_menu()
 
         # jsonファイル読み込み
-        if os.path.exists(PARAM):
-            jsonOpen = open(PARAM,"r")
-            jsonLoad = json.load(jsonOpen)
-            i = 0
-            for j in jsonLoad.values():
-                if i == 0:
-                    self.logFolder = jsonLoad.get('logFolder')
-                    self.bkEnt.insert(tk.END, self.logFolder)
-                else:
-                    self.tree.insert("", "end", iid=j['id'], text=j['id'], values=( j['from'], j['to']))
-                i = i + 1
+        try:
+            if os.path.exists(PARAM):
+                jsonOpen = open(PARAM,"r")
+                jsonLoad = json.load(jsonOpen)
+                i = 0
+                for j in jsonLoad.values():
+                    if i == 0:
+                        self.logFolder = jsonLoad.get('logFolder')
+                        self.bkEnt.insert(tk.END, self.logFolder)
+                    else:
+                        self.tree.insert("", "end", iid=j['id'], text=j['id'], values=( j['from'], j['to']))
+                    i = i + 1
+        except Exception as e:
+            e = "jsonファイルの読み込みに失敗しました。\n" + str(e)
+            self.error_message(e)
+            self.master.destroy()
 
 # ---------------------------------------- メイン画面 From ---------------------------------------- #
     def create_widgets(self):
@@ -65,16 +70,15 @@ class Application(tk.Frame):
         self.tree["columns"] = (1,2)
         self.tree["show"] = "tree","headings"
 
-        self.tree.heading("#0",text="")
+        self.tree.heading("#0",text="ID",command = self.all_select_item)
         # self.tree.heading(1,text="ID")
         self.tree.heading(1,text="コピー元")
         self.tree.heading(2,text="コピー先")
-        self.tree.column("#0",width=50)
+        self.tree.column("#0",width=120)
         # self.tree.column(1,width=65)
         self.tree.column(1,width=290)
         self.tree.column(2,width=290)
         self.tree.bind('<Double-1>', lambda c: self.on_double_click()) # ダブルクリック
-        self.tree.bind("<KeyPress-Delete>", lambda c: self.tree.delete(self.tree.focus())) # Deleteキー
         self.tree.grid(row=0, column=0, sticky=tk.EW, padx=10, pady=5, columnspan=5)
 
         self.bkLbl = tk.Label(self, text = "バックアップフォルダ: ")
@@ -93,7 +97,7 @@ class Application(tk.Frame):
         self.delButt.bind("<Button-1>", lambda c: self.delete_item())
         self.delButt.grid(row=2, column=1, sticky="E")
 
-        self.allButt = tk.Button(self, text="全選択", width=20)
+        self.allButt = tk.Button(self, text="全選択/全解除", width=20)
         self.allButt.bind("<Button-1>", lambda c: self.all_select_item())
         self.allButt.grid(row=2, column=2, sticky="E")
 
@@ -107,6 +111,8 @@ class Application(tk.Frame):
 
         self.kakushiLbl = tk.Label(self.win, text = "( ^_^)b", font=("メイリオ", "25"))
         self.kakushiLbl.place(x=1000,y=500)
+
+        self.tree.bind("<<TreeviewSelect>>", lambda c: self.check_item())
 
         # ショートカット
         self.master.bind("<Return>", self.tree.bind('<Double-1>')) # Enterキー
@@ -122,11 +128,25 @@ class Application(tk.Frame):
         self.master.bind("<Escape>", lambda c: self.tree.selection_remove(self.tree.selection())) # 選択解除
 
     def insert_tree(self):
-        self.tree.selection_set(self.tree.insert("","end", value=("","","")))
+        i = 0
+        for item in self.tree.get_children():
+            print('候補:',i,'重複チェック先:',self.tree.item(item)['text'])
+            if i == self.tree.item(item)['text']:
+                print("iid一致データあり")
+                i = i + 1
+        self.tree.insert("", "end", iid=i, text=i, value=("","",""))
+        return "break"
+
+    def check_item(self):
+        if self.tree.tag_has('unchecked', self.tree.selection()):
+            self.tree.change_state(self.tree.selection(), 'checked')
+        else:
+            self.tree.change_state(self.tree.selection(), 'unchecked')
 
     def exec_copy(self):
         try:
-            if self.tree.selection() == ():
+            print (self.tree.get_checked())
+            if self.tree.get_checked() == []:
                 mbox.showwarning("アラート", "実行対象を選択してください。")
                 return "break"
 
@@ -142,15 +162,16 @@ class Application(tk.Frame):
                 if not os.path.exists(logFolderNow):
                     os.mkdir(logFolderNow)
 
-                selected_items = self.tree.selection() # 行データの取得
+                selected_items = self.tree.get_checked() # 行データの取得
+                print (selected_items)
                 for item in selected_items:
                     row_data = self.tree.item(item)
 
                     # 列データの取得
                     row_value = row_data['values']
-                    id = row_value[0]
-                    fromPath = row_value[1]
-                    toPath = row_value[2]
+                    id = row_data['text']
+                    fromPath = row_value[0]
+                    toPath = row_value[1]
                     if not os.path.exists(toPath):
                         message = "パス'" + toPath + "'は存在しません。"
                         mbox.showerror("エラー", message)
@@ -202,50 +223,65 @@ class Application(tk.Frame):
             self.error_message(e)
 
     def delete_item(self):
-        selected_items = self.tree.selection() # 行データの取得
+        selected_items = self.tree.get_checked() # 行データの取得
         for item in selected_items:
             self.tree.delete(item)
 
     def all_select_item(self):
-        self.tree.selection_set(self.tree.get_children())
+        allItem = self.tree.get_children()
+        checkedItem = self.tree.get_checked()
+        print ('全アイテム数:',len(allItem),'チェック済みアイテム数:', len(checkedItem))
+        if len(allItem) != len(checkedItem): # 選択せれていないアイテムが1つでもあれば全選択
+            for i in allItem:
+                self.tree.change_state(i, 'checked')
+        else:
+            for i in allItem:
+                self.tree.change_state(i, 'unchecked')
 
     def save_item(self):
         msbox = mbox.askokcancel("確認", "設定を保存します。")
-        if msbox == True:
-            self.tree.selection_set(self.tree.get_children())
-            selected_items = self.tree.selection() # 行データの取得
+        try:
+            if msbox == True:
+                self.tree.selection_set(self.tree.get_children())
+                selected_items = self.tree.selection() # 行データの取得
 
-            i = 0
-            a = {'logFolder':self.bkEnt.get()}
-            for item in selected_items:
-                row_data = self.tree.item(item)
-                row_value = row_data['values']
-                a[i] = {'id':row_data['text'],'from':row_value[0],'to':row_value[1]}
-                i += 1
+                i = 0
+                a = {'logFolder':self.bkEnt.get()}
+                for item in selected_items:
+                    row_data = self.tree.item(item)
+                    row_value = row_data['values']
 
-            with open(PARAM, 'w') as f:
-                json.dump(a, f, indent=4, ensure_ascii=False)
+                    if row_data['text'] == '':
+                        raise ValueError("IDが入力されていないデータが存在します。")
 
-            self.tree.selection_remove(self.tree.selection())
-            mbox.showinfo('確認', '保存しました。')
-        return "break"
+                    a[i] = {'id':row_data['text'],'from':row_value[0],'to':row_value[1]}
+                    i += 1
+
+                with open(PARAM, 'w') as f:
+                    json.dump(a, f, indent=4, ensure_ascii=False)
+
+                self.tree.selection_remove(self.tree.selection())
+                mbox.showinfo('確認', '保存しました。')
+            return "break"
+        except Exception as e:
+            self.error_message(e)
 
     def move_up_item(self, m):
         if m == "up":
             cal = 1
         elif m == "down":
-            i = len(self.tree.selection()) # 選択アイテム数
+            i = len(self.tree.get_checked()) # 選択アイテム数
             cal = -i # 複数選択の場合、複数選択分まとめて移動
-        for selected_item in self.tree.selection():
+        for selected_item in self.tree.get_checked():
             self.tree.move(selected_item, self.tree.parent(selected_item), self.tree.index(selected_item) - cal)
 
     def copy_item(self, m):
         if m == "up":
             cal = 0
         elif m == "down":
-            cal = len(self.tree.selection())
+            cal = len(self.tree.get_checked())
         a = 0
-        for item in self.tree.selection():
+        for item in self.tree.get_checked() :
             idx = self.tree.index(item)
             if m == "up" and a > 0:
                 idx = idx -a
@@ -261,11 +297,14 @@ class Application(tk.Frame):
 # ---------------------------------------- メイン画面 To ---------------------------------------- #
 # ---------------------------------------- サブ画面 From ---------------------------------------- #
     def on_double_click(self): # https://try2explore.com/questions/jp/12101569
-        # First check if a blank space was selected
-        #entryIndex = self.focus()
-        #if '' == entryIndex: return
-        a = self.tree.selection()
-        if () == a: return
+        # ダブルクリック時チェックボックスの状態を反転
+        if self.tree.tag_has('unchecked', self.tree.selection()):
+            self.tree.change_state(self.tree.selection(), 'checked')
+        else:
+            self.tree.change_state(self.tree.selection(), 'unchecked')
+
+        #a = self.tree.selection()
+        if () == self.tree.selection(): return
         if self.win == None: # 重複して開かない
             self.win = tk.Toplevel()
             lw = 400
@@ -289,12 +328,6 @@ class Application(tk.Frame):
         title = row_data['text'] # id
         fromPath = row_value[0] # from
         toPath = row_value[1] # to
-
-        # # Grab the entry's values
-        # for child in self.tree.get_children():
-        #    if child == entryIndex:
-        #        values = self.tree.item(child)["values"]
-        #        break
 
         self.col1Lbl = tk.Label(self.win, text = "ID: ")# 一意になるように制限
         self.col1Ent = tk.Entry(self.win, width = 20)
