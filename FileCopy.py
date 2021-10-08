@@ -112,7 +112,7 @@ class Application(tk.Frame):
         self.kakushiLbl = tk.Label(self.win, text = "( ^_^)b", font=("メイリオ", "25"))
         self.kakushiLbl.place(x=1000,y=500)
 
-        self.tree.bind("<<TreeviewSelect>>", lambda c: self.check_item())
+        # self.tree.bind("<<TreeviewSelect>>", lambda c: self.check_item())
 
         # ショートカット
         self.master.bind("<Return>", self.tree.bind('<Double-1>')) # Enterキー
@@ -125,23 +125,38 @@ class Application(tk.Frame):
         self.master.bind("<j>", lambda c: self.move_up_item("down")) # 下に並び替え
         self.master.bind("<Shift-Alt-K>", lambda c: self.copy_item("up")) # アイテムを複製
         self.master.bind("<Shift-Alt-J>", lambda c: self.copy_item("down")) # アイテムを複製
+        self.master.bind("<Button-2>", lambda c: self.copy_item("down")) # アイテムを複製
         self.master.bind("<Escape>", lambda c: self.tree.selection_remove(self.tree.selection())) # 選択解除
+        self.master.bind("<space>", lambda c: self.check_item()) # チェック
+        self.master.bind("<Button-3>", lambda c: self.check_item()) # チェック
 
     def insert_tree(self):
         i = 0
-        for item in self.tree.get_children():
-            print('候補:',i,'重複チェック先:',self.tree.item(item)['text'])
-            if i == self.tree.item(item)['text']:
-                print("iid一致データあり")
-                i = i + 1
+        m = ""
+        num = len(self.tree.get_children()) # 全アイテム数
+        print("-----")
+        while True: # breakするまで永遠ループ
+            print(">>",m,"ループ処理開始",sep="")
+            for item in self.tree.get_children():
+                print('候補:',i,'重複チェック先:',self.tree.item(item)['text'])
+                if i == self.tree.item(item)['text']: # IDが重複しているかチェック
+                    print("iid一致データあり\n")
+                    i = i + 1 # 重複した場合は
+                    m = "再"
+                    break
+                m = ""
+            if m == "":
+                break
+        print("ID:「", i, "」で作成しました。", sep="")
         self.tree.insert("", "end", iid=i, text=i, value=("","",""))
         return "break"
 
     def check_item(self):
-        if self.tree.tag_has('unchecked', self.tree.selection()):
-            self.tree.change_state(self.tree.selection(), 'checked')
-        else:
-            self.tree.change_state(self.tree.selection(), 'unchecked')
+        for item in self.tree.selection():
+            if self.tree.tag_has('unchecked', item):
+                self.tree.change_state(item, 'checked')
+            else:
+                self.tree.change_state(item, 'unchecked')
 
     def exec_copy(self):
         try:
@@ -230,8 +245,7 @@ class Application(tk.Frame):
     def all_select_item(self):
         allItem = self.tree.get_children()
         checkedItem = self.tree.get_checked()
-        print ('全アイテム数:',len(allItem),'チェック済みアイテム数:', len(checkedItem))
-        if len(allItem) != len(checkedItem): # 選択せれていないアイテムが1つでもあれば全選択
+        if len(allItem) != len(checkedItem): # 選択されていないアイテムが1つでもあれば全選択
             for i in allItem:
                 self.tree.change_state(i, 'checked')
         else:
@@ -298,10 +312,10 @@ class Application(tk.Frame):
 # ---------------------------------------- サブ画面 From ---------------------------------------- #
     def on_double_click(self): # https://try2explore.com/questions/jp/12101569
         # ダブルクリック時チェックボックスの状態を反転
-        if self.tree.tag_has('unchecked', self.tree.selection()):
-            self.tree.change_state(self.tree.selection(), 'checked')
-        else:
-            self.tree.change_state(self.tree.selection(), 'unchecked')
+        # if self.tree.tag_has('unchecked', self.tree.selection()):
+        #     self.tree.change_state(self.tree.selection(), 'checked')
+        # else:
+        #     self.tree.change_state(self.tree.selection(), 'unchecked')
 
         #a = self.tree.selection()
         if () == self.tree.selection(): return
@@ -316,7 +330,6 @@ class Application(tk.Frame):
             # self.win.attributes("-toolwindow", True)
             self.win.grab_set()
             self.win.focus_set()
-            # TODO:方向キーでITEMを移動
 
         # 行データの取得
         selected_items = self.tree.selection()
@@ -490,9 +503,12 @@ class Application(tk.Frame):
             webbrowser.open(link)
 
     def add_startmenu(self):
-        cmdFile = os.path.dirname(sys.argv[0]) + "/script/run_スタートメニューに追加.bat"
-        print (cmdFile)
-        os.system(cmdFile)
+        try:
+            cmdFile = os.path.dirname(sys.argv[0]) + "/script/run_スタートメニューに追加.bat"
+            print (cmdFile)
+            os.system(cmdFile)
+        except Exception as e:
+            self.error_message(e)
 
 # ---------------------------------------- メニュー画面 To ---------------------------------------- #
 
