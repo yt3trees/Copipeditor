@@ -1,17 +1,13 @@
 # tikinterライブラリの読み込み
 import tkinter as tk
 import tkinter.ttk as ttk
-from tkinter import Checkbutton, messagebox as mbox
+from tkinter import messagebox as mbox
 import os
 import shutil
 from distutils import dir_util
 from tkinter import filedialog
 import json
 from typing import Text
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QWidget
-import sys
-import webbrowser
 import glob
 import datetime
 from ttkwidgets import CheckboxTreeview
@@ -40,9 +36,7 @@ class Application(tk.Frame):
     def __init__(self, master=None):
         tk.Frame.__init__(self, master)
         self.pack(expand=1, fill=tk.BOTH, anchor=tk.NW)
-
         self.master.title("コピーツール")
-
         self.ww = self.master.winfo_screenwidth()
         self.wh = self.master.winfo_screenheight()
         lw = 750 # self.master.winfo_width()
@@ -138,43 +132,48 @@ class Application(tk.Frame):
         # ショートカット
         shortcut.define("main", self, treeOpe)
 
-    def copy_callback(self):
-        self.progress_bar("start") # プログレスバー表示
+    def copy_callback(self): # exec_copyを別スレッドで実行するための関数
         thread = threading.Thread(target=self.exec_copy)
-        thread.start()
+        thread.start() # ここで止まらずすぐに呼び出し元にreturnする
         return "break"
 
     def exec_copy(self):
-        #os.chdir(os.path.dirname(sys.argv[0])) # カレントディレトリリセット
-        self.pb = ttk.Progressbar(root, mode="indeterminate") # プログレスバー(非確定的モード)
         try:
-            print (self.tree.get_checked())
-            if self.tree.get_checked() == []:
+            if self.tree.get_checked() == []: # アイテムが1つも選択されていない場合
                 mbox.showwarning("アラート", "実行対象を選択してください。")
                 return "break"
 
-            td = str(datetime.date.today())
-            today = td.replace("-", "") #yyymmdd
+            for item in self.tree.get_checked(): # 各パスの存在確認
+                row_data = self.tree.item(item) # 行データの取得
+                row_value = row_data['values'] # 列データの取得
+                id = row_data['text']
+                fromPath = row_value[0]
+                toPath = row_value[1]
+                if not os.path.exists(fromPath):
+                    message = "パス'" + fromPath + "'は存在しません。\n処理を中止します。"
+                    mbox.showerror("エラー", message)
+                    return "break"
+                if not os.path.exists(toPath):
+                    message = "パス'" + toPath + "'は存在しません。\n処理を中止します。"
+                    mbox.showerror("エラー", message)
+                    return "break"
+
+            today = str(datetime.date.today()).replace("-", "") # yyyymmdd
             t = str(datetime.datetime.now().time())[0:6]
-            time = t.replace(":","")
+            time = str(datetime.datetime.now().time())[0:6].replace(":","")
             dateNow = today + time
-            msbox = mbox.askokcancel("確認", "コピーを実行します。")
+
+            delMsg = ""
+            if self.checkDel_v.get() == True: # コピー元削除チェックボックスがオンの場合
+                delMsg = "\n※コピー後元のファイルは削除されます。"
+
+            msbox = mbox.askokcancel("確認", "コピーを実行します。" + delMsg)
             if msbox == True: # OKボタン押下
+                self.progress_bar("start") # プログレスバー表示
                 logFolderNow = self.bkEnt.get()+ "/" + dateNow
                 selected_items = self.tree.get_checked() # 行データの取得
                 print (selected_items)
                 for item in selected_items:
-                    row_data = self.tree.item(item)
-
-                    # 列データの取得
-                    row_value = row_data['values']
-                    id = row_data['text']
-                    fromPath = row_value[0]
-                    toPath = row_value[1]
-                    if not os.path.exists(toPath):
-                        message = "パス'" + toPath + "'は存在しません。"
-                        mbox.showerror("エラー", message)
-                        return "break"
                     # フォルダ生成
                     logFolderNowID = logFolderNow + "_" + id
                     logFolderNowFrom = logFolderNowID + "/" + "After"
@@ -224,11 +223,11 @@ class Application(tk.Frame):
                         return "break"
                 self.progress_bar("stop") # プログレスバー終了
                 mbox.showinfo("アラート", "処理完了しました。")
+            else:
+                return "break"
             return "break"
         except Exception as e:
             self.error_message(e)
-        finally:
-            self.progress_bar("stop") # プログレスバー終了
 
     def save_item(self):
         msbox = mbox.askokcancel("確認", "設定を保存します。")
@@ -238,7 +237,10 @@ class Application(tk.Frame):
                 selected_items = self.tree.selection() # 行データの取得
 
                 i = 0
-                a = {'logFolder':self.bkEnt.get()}
+                if self.check_v.get() == True or self.bkFolderPathBack==None:
+                    a = {'logFolder':self.bkEnt.get()}
+                else:
+                    a = {'logFolder':self.bkFolderPathBack}
                 for item in selected_items:
                     row_data = self.tree.item(item)
                     row_value = row_data['values']
@@ -277,9 +279,10 @@ class Application(tk.Frame):
             self.winbar.pb = ttk.Progressbar(self.winbar, mode="indeterminate",length="180") #非確定的モード
             self.winbar.pb.start()
             self.winbar.pb.pack()
+            return self.winbar.pb
+
         elif param == "stop":
             self.winbar.destroy()
-        return self.winbar.pb
 
     def change_readonly(self, var, ent):
         if var.get() == False:
@@ -289,6 +292,7 @@ class Application(tk.Frame):
         elif var.get() == True:
             self.bkEntValue = ent.get()
             ent.delete(0,tk.END)
+            self.bkFolderPathBack = self.bkEntValue
             ent.insert(tk.END, "バックアップ無し")
             ent.configure(state='readonly')
 
