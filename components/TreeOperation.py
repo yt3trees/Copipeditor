@@ -1,5 +1,6 @@
 class TreeOperation:
-    def insert_tree(self, obj):
+    # 新規追加
+    def insert_tree(self, obj): 
         i = 0
         m = ""
         num = len(obj.get_children()) # 全アイテム数
@@ -20,6 +21,7 @@ class TreeOperation:
         obj.insert("", "end", iid=i, text=i, value=("","",""))
         return "break"
 
+    # チェックオンオフ判定
     def check_item(self, obj):
         for item in obj.selection():
             if obj.tag_has('unchecked', item):
@@ -27,11 +29,13 @@ class TreeOperation:
             else:
                 obj.change_state(item, 'unchecked')
 
+    # アイテム削除
     def delete_item(self, obj):
         selected_items = obj.get_checked() # 行データの取得
         for item in selected_items:
             obj.delete(item)
 
+    # 全選択/全解除
     def all_select_item(self, obj):
         allItem = obj.get_children()
         checkedItem = obj.get_checked()
@@ -42,6 +46,7 @@ class TreeOperation:
             for i in allItem:
                 obj.change_state(i, 'unchecked')
 
+    # アイテム位置移動
     def move_up_item(self, obj, m):
         if m == "up":
             cal = 1
@@ -51,6 +56,7 @@ class TreeOperation:
         for selected_item in obj.get_checked():
             obj.move(selected_item, obj.parent(selected_item), obj.index(selected_item) - cal)
 
+    # アイテム複製
     def copy_item(self, obj, m):
         if m == "up":
             cal = 0

@@ -39,7 +39,7 @@ class Menu:
         # 実行タブ
         execMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="実行", menu=execMenu)
-        execMenu.add_command(label="コピー処理実行", command = lambda : obj.exec_copy(), accelerator="F5")
+        execMenu.add_command(label="コピー処理実行", command = lambda : obj.copy_callback(), accelerator="F5")
         # ヘルプタブ
         helpMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="ヘルプ", menu=helpMenu)
