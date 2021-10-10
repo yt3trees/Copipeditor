@@ -24,7 +24,6 @@ SOURCE = "https://github.com/"
 btColorOk = "#83ccd2"
 btColorDel = "#f6bfbc"
 btColorCan = "#c0c6c9"
-
 class Application(tk.Frame):
     def __init__(self, master=None):
         tk.Frame.__init__(self, master)
@@ -37,6 +36,8 @@ class Application(tk.Frame):
         lh = 314 # self.master.winfo_height()
         self.master.geometry(str(lw)+"x"+str(lh)+"+"+str(int(self.ww/2-lw/2-10))+"+"+str(int(self.wh/2-lh/2-15)) )
         #self.master.geometry("750x314+800+500")
+        # iconfile = "icon\copytool.ico"
+        # self.master.iconbitmap(default=iconfile)
         self.master.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(data=ICON))
         style = ttk.Style()
         style.theme_use("xpnative")
@@ -340,6 +341,7 @@ class Application(tk.Frame):
             lh = 45
             self.winbar.geometry(str(lw)+"x"+str(lh)+"+"+str(int(self.ww/2-lw/2-10))+"+"+str(int(self.wh/2-lh/2-15)))
             self.winbar.title("コピー中")
+            self.winbar.attributes("-toolwindow", True)
             self.winbar.grab_set()
             self.winbar.focus_set()
             self.winbar.Lbl = tk.Label(self.winbar, text = "コピー中...")
@@ -373,8 +375,8 @@ class Application(tk.Frame):
             self.win.geometry(str(lw)+"x"+str(lh)+"+"+str(int(self.ww/2-lw/2-10))+"+"+str(int(self.wh/2-lh/2-15)))
             # self.win.geometry("400x100+975+600")
             self.win.title("Edit Entry")
+            self.win.attributes("-toolwindow", True)
             # self.win.attributes("-topmost", True)
-            # self.win.attributes("-toolwindow", True)
             self.win.grab_set()
             self.win.focus_set()
 
@@ -471,30 +473,32 @@ class Application(tk.Frame):
     def advanced_setting(self):
         self.winSet = tk.Toplevel()
         lw = 150
-        lh = 150
+        lh = 110
         self.winSet.geometry(str(lw)+"x"+str(lh)+"+"+str(int(self.ww/2-lw/2-10))+"+"+str(int(self.wh/2-lh/2-15)))
         self.winSet.title("バージョン情報")
         self.winSet.grab_set()
         self.winSet.attributes("-toolwindow", True)
         self.winSet.focus_set()
 
-        self.winSet.Lbl = tk.Label(self.winSet, text = "バックアップする:")
-        self.winSet.Lbl.grid(row = 0, column = 0, sticky = "W", pady=10, padx=10)
-        self.winSet.checkBkFolder = tk.Checkbutton(self.winSet, text="", variable=self.check_v)
+        # self.winSet.Lbl = tk.Label(self.winSet, text = "バックアップする:")
+        # self.winSet.Lbl.grid(row = 0, column = 0, sticky = "W", pady=10, padx=10)
+        self.winSet.checkBkFolder = tk.Checkbutton(self.winSet, text="バックアップする", variable=self.check_v)
         self.winSet.checkBkFolder.bind("<Button-1>", lambda e: self.change_readonly(self.check_v, self.bkEnt))
-        self.winSet.checkBkFolder.grid(row = 0, column = 1, sticky = "W")
+        self.winSet.checkBkFolder.grid(row = 0, column = 0, sticky = "W", pady=5, padx=15)
 
-        self.winSet.Lbl2 = tk.Label(self.winSet, text = "コピー元削除:")
-        self.winSet.Lbl2.grid(row = 1, column = 0, sticky = "W", pady=10, padx=10)
-        self.winSet.checkDelFromFile = tk.Checkbutton(self.winSet, text="", variable=self.checkDel_v)
+        # self.winSet.Lbl2 = tk.Label(self.winSet, text = "コピー元削除:")
+        # self.winSet.Lbl2.grid(row = 1, column = 0, sticky = "W", pady=10, padx=10)
+        self.winSet.checkDelFromFile = tk.Checkbutton(self.winSet, text="コピー元削除", variable=self.checkDel_v)
         self.winSet.checkDelFromFile.bind("<Button-1>", lambda e: self.change_setting_button_color(self.checkDel_v, self.settButt))
-        self.winSet.checkDelFromFile.grid(row = 1, column = 1, sticky = "W")
+        self.winSet.checkDelFromFile.grid(row = 1, column = 0, sticky = "W", pady=5, padx=15)
 
         self.winSet.okButt = tk.Button(self.winSet, text = "OK", width=10)
         self.winSet.okButt.bind("<Button-1>", lambda c: self.winSet.destroy())
-        self.winSet.okButt.place(x = lw/4, y = 120)
+        self.winSet.okButt.place(x = lw/4, y = 80)
 
         self.winSet.bind("<Escape>", lambda c: self.close_window(self.winSet))
+
+        return "break"
 
     def delete_from_files(self, path):
         shutil.rmtree(path)
@@ -600,162 +604,7 @@ class Application(tk.Frame):
 # ---------------------------------------- メニュー画面 To ---------------------------------------- #
 
 # icon\copytool.gif
-ICON = '''
-        R0lGODlhAAIAAvIAAAAAAP97Uf+RWi6A/jSZ/wAAAAAAAAAAACH5BAEAAAAAIf8L
-        SW1hZ2VNYWdpY2sNZ2FtbWE9MC40NTQ1NQAh/wtYTVAgRGF0YVhNUDw/eHBhY2tl
-        dCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+Cjx4
-        OnhtcG1ldGEgeG1sbnM6eD0nYWRvYmU6bnM6bWV0YS8nIHg6eG1wdGs9J0ltYWdl
-        OjpFeGlmVG9vbCAxMi4xNic+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3
-        dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNj
-        cmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczp0aWZmPSdodHRwOi8vbnMuYWRv
-        YmUuY29tL3RpZmYvMS4wLyc+CiAgPHRpZmY6T3JpZW50YXRpb24+MTwvdGlmZjpP
-        cmllbnRhdGlvbj4KIDwvcmRmOkRlc2NyaXB0aW9uPgo8L3JkZjpSREY+CjwveDp4
-        bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAK
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        IAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo8P3hwYWNrZXQgZW5kPSd3
-        Jz8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU
-        09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWk
-        o6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0
-        c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVE
-        Q0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUU
-        ExIREA8ODQwLCgkIBwYFBAMCAQAALAAAAAAAAgACAAP+CLrc/jDKSau9OOvNu/9g
-        KI5kaZ5oqq5s675wLM90bd94ru987//AoHBILBqPyKRyyWw6n9CodEqtWq/YrHbL
-        7Xq/4LB4TC6bz+i0es1uu9/wuHxOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+Q
-        kZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/A
-        wcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5dUE6Onq6+zt7u/w
-        8fLoGAL29/j5+vv8/f7/AAMKHEiw4D5zKuYpXMiw4bp6BiNKnEixokWACFM43Mj+
-        sSO9CxdDihxJ8mJGFB5TqowHsaTLlzBfnjyxsqbNjxZi6tzJ0+BMEzeDpmzZs6hR
-        oz9LCF26kejRp1BLJiXBtOpCp1GzapU4dYTVryxBbh1LdmBXEWDTtsNatq1bAWdD
-        qJ2bju3bu1rjgqBL1y7ev0f1fuA71y/gwzsFeyCs1jDixy4Vd2Cc1jHkyyElc6AM
-        1jLmzxMzch7d0TPo02ORkV7d0DTq11BVs54tzzXs2z1l0969Vizu31t18x6OswLw
-        41mFE+dtG7lzk8eWL2/+vDrX6NKHU7fO3Sz27Lu3dx/vTzn41eLJq89n/vzo9Ovj
-        t3dPGX589fPpE7Z/f3z+fv19+dbfgBh9ByBn/BFY3X8HViagghCyd0qDFIaVU4QY
-        XmdJhRz2dmGGIHq3YYckFkdBiCgGhEmJJSaYIn6XsEiiiy/6F6OMHNJYI3cr4lih
-        jjsueKOPDQIZpHM9EnmgkUcel6SS+jHZ5G9PQumelFPeVqWV4GGZ5Wtbcimdl1+e
-        FqaYxJFZ5mdnosncg2tG2KabtKkZJ2SI0MnYAHz26eefgAbqp513IpannnwJquii
-        fxJaKGCHIjoXo5Qq6uijeEUqaVqVdtoonJjep+mmX3lq6gCXhurWqKRWdaqnqapa
-        FqutLvVqp7HKmtohtYJ1a6W56poXr71a9SulwQr+GxWtxdp0LKPJKvsUs82u9Oyi
-        0UqLFLHVCnWtpaBqK6Qh3dr6baDZissTteV2dC664aqLHLvtbvQuoOnKGxO99TZ0
-        76cf6jtuHf3G8+/B8AaM5A0golEwPAhH3Ge+kTGcocMPuyOxxBRLZTGGGGfMzsYR
-        d0wSDg2fIXI7JCNs8kgoX6zyyuu0fPDLIsUM8sw0p2Pzvzhn9rGcPPdMwM/3Bg2d
-        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
-        /3Tqv6P7Qzv/5Ud/4Hcn/gdv8heA+zeAcVKA4HYG+pcm/FcjDIhuDoiAEKiAazKB
-        AFeBqCd9o6crGohwHHgwlEdu8hKCPoYGD6gdEfgiKNhiKmiBLIiBZfKCJBaDHZh9
-        NPglNrhhOEiCold56tKDEvaDkxeEJjiERAhgRngvJchu+rKETHgHK/gmS4UZKCCF
-        dccIVRged8BqJqCFYAcJXVgnX4iFJyCGZycJZTgbeACGJaCGTDcJbcgab4iGYSiH
-        U0eHMmiFgXUZWaiHhVUJdYgeZwiIaSiISMaHOfh9f4gniaiID8eGfeiFV4iIeSiJ
-        MceIQLj+fI/4GIGoiXTGiUfoiWmFiXEoiqNIiY3YfpcIiZmoipcWCYVIGneIiiQg
-        i8lFiJVohq8IipGoi5hQi+9xiLCYiroIa6zYiR54iseYi8mojLTYi25ojMBoAQyB
-        DcSIINZoKBeQjdewjfXRjYeBAeBoDeLIGLf4jBNwjtWQjvtBjpDyjVcRjtRoh/L4
-        F+ZYj+h4j4b4i96Ijfz4jv5oi/mYKfSoENpYkMUIkOWYkPOwkK0ogJ8YkBXgjtQA
-        j3yxjtd4kQOZkQzJjQ45jwKpkPY4kQlYkQ9ZkhF5ksyogypJkh5pkv2IkhcYk/oI
-        kbXhkqXYjBuFi+34kdOwOHzyhGH+EI3SCAFMgQxEOQBGCQZIuY9CwZRE+ZRfEJU6
-        aRNUuThW6QVYyZI3sZWD05Vd8JUzGRRiqTdkyQVmSQFLeQxNuZZb0JZBOZVwWZVI
-        KAZ0KQFvaQxxmZdHGY1SiZZ3yZWACZWCmZU1kZZyI5dasJcR0JfF8JemOAaQqZRL
-        wZhq45hZcJkPIJnEQJk+qZeJCZZaWZhjeZhXWZpnGZaoqZaq6ZWs6ZaZyZONOW6S
-        8I+TiZe7Rgm6GZq8uW2+aZB+GZxWN5wNuZuG2ZuT8JvDIJrH2ZzEqZypyZy5OZ3A
-        uZzCKZ3JmZ3VuZ3X2Z3PaZzTVgnOKQzQWZ7IKZLUCZvWGQn+5xkM6fl05omd46md
-        0Rme7Omd7gme8Gmf6Eme9Lme41icTWmTgZOgpXELBxqSCvqgHlILDYqgEFqhO2kL
-        E/qSFrqhNCmhGeqEHBqiHUoLHwqiInqi74ALJfouKNqiEUqiK/otLjqjdcGgMXot
-        NEqjKnqjz5KjM7qjPPorPuqiQBqkrzKkLVqkRgp3SEozSrqkTtekEPqkUKpsUsqh
-        VFql6nalWPqaWmqiXNovWfqlOBqmBTOmZHosZnqmNpqmYLqm3YKmbnqkcNoucjqn
-        TFqnXHKneBqleopdbdqnPfqnvQWjgjqohGpeGHqoiJqoqhWojEqnjvqoixqptzKp
-        owX+qZaadpi6p5q6qVXXqXrCp6D6J6IKqJVaqn56qgvnC6r6qrAaqxCUqrJaq7a6
-        qaR6q7q6qzyaq7z6q8DalL4arMRarEgzrMaarMrqPrS6rM76rPUzC9A6rdSaNJ9a
-        rdiarQPUrNrard46Mdf6reJarcg6rub6q+V6rupqq+m6ru76qu36rvJqqfE6r/ba
-        pxJ5r/p6rAixr/76MxnxrwK7MQE7sAbLrOVwsAorNf26sA67Nw37sBKLWNkwsRYL
-        WORwsRpbQwm7sR47KBH7sR5bsCI7siFbshdLsiibsie7shKrsi77spqhATGLrjOb
-        AjXLqzeLszmrqzuLAj3rsz/+awJBe6tDS7RFW6tHWwJJq7RLOwJNK6tPC7VRC6tT
-        KwJVa7VXCwJZC69b+wFdq6pfC7ZhC6pj6wFla7ZnywFpi6truwFtS69vqwzCOrcV
-        S5R2e7eLk7f5qjd8a5tq87c1OTiCS5B7W7hDibeIKw11u7jQ0LiO6wyQG7nMMLmU
-        S7eKe7mVm7mai7mH27meS7igG7oIO7qDW7qmC5L8k7qqCz6sa7iu+7qJu7qy+7jR
-        WruSe7u4u7m0u7u8G7u+2wzZE7yaybDEK7y6e7wGCrzKW7xj07yka63QmwxZNb38
-        ua3We7rYm72tC0fcC7ve+72zi7Hia7toVb7PUL3oywtu6ru+utC+7uur8Wu+5Du/
-        1Eux9uuq+Ju/7Lu//Pu+/vu/AjzABFzABnzACJzACrzADNzADvzAEBzBEjzBFFzB
-        FnzBGJzBGrzBHNzBHvzBIBzCIjzCJFzCJnzCKJzCKrzCLNzCLvzCMBzDMjy2CQAA
-        Ow==
-        '''
+ICON = 'R0lGODlhAAIAAvIAAAAAAP97Uf+RWi6A/jSZ/wAAAAAAAAAAACH5BAEAAAAAIf8LSW1hZ2VNYWdpY2sNZ2FtbWE9MC40NTQ1NQAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0nYWRvYmU6bnM6bWV0YS8nIHg6eG1wdGs9J0ltYWdlOjpFeGlmVG9vbCAxMi4xNic+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczp0aWZmPSdodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyc+CiAgPHRpZmY6T3JpZW50YXRpb24+MTwvdGlmZjpPcmllbnRhdGlvbj4KIDwvcmRmOkRlc2NyaXB0aW9uPgo8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg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'
 
 root = tk.Tk()
 app = Application(master=root)
