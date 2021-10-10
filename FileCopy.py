@@ -11,7 +11,6 @@ from typing import Text
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget
 import sys
-#from PIL import Image, ImageTk
 import webbrowser
 import glob
 import datetime
@@ -108,17 +107,19 @@ class Application(tk.Frame):
         self.bkLbl.grid(row = 1, column = 0)
         self.bkEnt = tk.Entry(self, width = 74)
         self.bkEnt.grid(row = 1, column = 1, sticky="W", pady=0, columnspan=3)
-        self.bkFolderButt = tk.Button(self, text = "フォルダ", width = 10)
+        self.bkFolderButt = tk.Button(self, text = "フォルダ", width = 9)
         self.bkFolderButt.bind("<Button-1>", lambda e: self.folder_dialog(self.bkEnt))
         self.bkFolderButt.grid(row = 1, column = 4, sticky = "W")
+
         self.check_v = tk.BooleanVar()
         self.check_v.set( True )
-
         self.bkEntValue = self.bkEnt.get()
+        self.checkDel_v = tk.BooleanVar()
+        self.checkDel_v.set( False )
 
-        self.checkBkFolder = tk.Checkbutton(self, text="", variable=self.check_v)
-        self.checkBkFolder.bind("<Button-1>", lambda e: self.change_readonly(self.check_v, self.bkEnt))
-        self.checkBkFolder.place(x = 685, y = 237)
+        self.settButt = tk.Button(self, text = "詳細設定", width = 9)
+        self.settButt.bind("<Button-1>", lambda e: self.advanced_setting())
+        self.settButt.place(x = 675, y = 236.5)
 
         self.kakushiLbl = tk.Label(self.win, text = "( ^_^)b", font=("メイリオ", "25"))
         self.kakushiLbl.place(x=1000,y=500)
@@ -245,7 +246,9 @@ class Application(tk.Frame):
                         if self.bkEnt.get() != "バックアップ無し":
                             dir_util.copy_tree(fromPath, logFolderNowFrom) # コピー元ファイルをバックアップフォルダにコピー
                         dir_util.copy_tree(fromPath, toPath)
-                        print ('実行：',fromPath,toPath)
+                        if self.checkDel_v.get() == True: # コピー元削除チェックボックスがオンの場合
+                            self.delete_from_files(fromPath)
+                        print ('実行：',fromPath, "→" ,toPath)
                         dir_util._path_created = {} # キャッシュをクリア
                     else:
                         message = "パス'" + fromPath + "'は存在しません。"
@@ -423,22 +426,22 @@ class Application(tk.Frame):
         self.okButt.place(x = 263, y = 73)
         # Cancelボタン
         self.canButt = tk.Button(self.win, text = "Cancel", bg = btColorCan, width = 5)
-        self.canButt.bind("<Button-1>", lambda c: self.close_window())
+        self.canButt.bind("<Button-1>", lambda c: self.close_window(self.win))
         self.canButt.place(x = 308, y = 73)
         # Deleteボタン
         self.delButt = tk.Button(self.win, text = "Delete", bg = btColorDel, width = 5)
-        self.delButt.bind("<Button-1>", lambda c: self.tree.delete(self.tree.focus()) & self.close_window())
+        self.delButt.bind("<Button-1>", lambda c: self.tree.delete(self.tree.focus()) & self.close_window(self.win))
         self.delButt.place(x = 353, y = 73)
 
         # xボタン押下時の制御変更
-        self.win.protocol('WM_DELETE_WINDOW', self.close_window)
+        self.win.protocol('WM_DELETE_WINDOW', lambda : self.close_window(self.win))
 
         # ショートカット
-        self.win.bind("<Escape>", lambda c: self.close_window()) # サブメニューを閉じる
+        self.win.bind("<Escape>", lambda c: self.close_window(self.win)) # サブメニューを閉じる
         self.win.bind("<Return>", lambda e: update_then_destroy()) # 入力内容確定
 
-    def close_window(self): # サブメニュー重複対策
-        self.win.destroy()
+    def close_window(self,win): # サブメニュー重複対策
+        win.destroy()
         self.win = None
         return "break"
 
@@ -464,6 +467,46 @@ class Application(tk.Frame):
         curr = self.tree.focus()
         if '' == curr: return
         self.tree.delete(curr)
+
+    def advanced_setting(self):
+        self.winSet = tk.Toplevel()
+        lw = 150
+        lh = 150
+        self.winSet.geometry(str(lw)+"x"+str(lh)+"+"+str(int(self.ww/2-lw/2-10))+"+"+str(int(self.wh/2-lh/2-15)))
+        self.winSet.title("バージョン情報")
+        self.winSet.grab_set()
+        self.winSet.attributes("-toolwindow", True)
+        self.winSet.focus_set()
+
+        self.winSet.Lbl = tk.Label(self.winSet, text = "バックアップする:")
+        self.winSet.Lbl.grid(row = 0, column = 0, sticky = "W", pady=10, padx=10)
+        self.winSet.checkBkFolder = tk.Checkbutton(self.winSet, text="", variable=self.check_v)
+        self.winSet.checkBkFolder.bind("<Button-1>", lambda e: self.change_readonly(self.check_v, self.bkEnt))
+        self.winSet.checkBkFolder.grid(row = 0, column = 1, sticky = "W")
+
+        self.winSet.Lbl2 = tk.Label(self.winSet, text = "コピー元削除:")
+        self.winSet.Lbl2.grid(row = 1, column = 0, sticky = "W", pady=10, padx=10)
+        self.winSet.checkDelFromFile = tk.Checkbutton(self.winSet, text="", variable=self.checkDel_v)
+        self.winSet.checkDelFromFile.bind("<Button-1>", lambda e: self.change_setting_button_color(self.checkDel_v, self.settButt))
+        self.winSet.checkDelFromFile.grid(row = 1, column = 1, sticky = "W")
+
+        self.winSet.okButt = tk.Button(self.winSet, text = "OK", width=10)
+        self.winSet.okButt.bind("<Button-1>", lambda c: self.winSet.destroy())
+        self.winSet.okButt.place(x = lw/4, y = 120)
+
+        self.winSet.bind("<Escape>", lambda c: self.close_window(self.winSet))
+
+    def delete_from_files(self, path):
+        shutil.rmtree(path)
+        os.mkdir(path)
+        return "break"
+
+    def change_setting_button_color(self, var, btn):
+        if var.get() == False:
+            btn.configure(bg=btColorDel)
+        elif var.get() == True:
+            btn.configure(bg="#F0F0F0")
+
 # ---------------------------------------- サブ画面 To ---------------------------------------- #
 # ---------------------------------------- メニュー画面 From ---------------------------------------- #
     def create_menu(self):
