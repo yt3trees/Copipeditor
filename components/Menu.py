@@ -29,7 +29,7 @@ class Menu:
         # 編集タブ
         editMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="編集", menu=editMenu)
-        editMenu.add_command(label="追加", command = obj2.insert_tree, accelerator="Ctrl+N")
+        editMenu.add_command(label="追加", command = lambda : obj2.insert_tree(obj.tree), accelerator="Ctrl+N")
         editMenu.add_command(label="削除", command = lambda : obj.delete_item(obj.tree), accelerator="Delete")
         editMenu.add_command(label="全選択", command = lambda : obj.all_select_item(obj.tree), accelerator="Ctrl+A")
         editMenu.add_command(label="上と並び替え", command = lambda : obj.move_up_item(obj.tree,"up"), accelerator="K")
@@ -68,7 +68,7 @@ class Menu:
         obj.canvas.create_image(0 , 0, image = obj.img, anchor = tk.NW)
 
         # ツール情報
-        title = 'コピーツール ' + VERSION
+        title = 'Copipeditor ' + VERSION
         versionInfo = 'Copyright © 2021 ytmori All rights reserved.'
         versionInfo2 = 'Source： ' + SOURCE
         versionInfo3 = 'Python： v3.9.7'
@@ -84,7 +84,7 @@ class Menu:
         obj.labelPython.grid(row= 3 , column = 1, sticky = "NW")
         obj.okButt = tk.Button(obj.winv, text = "OK", width=10)
         obj.okButt.bind("<Button-1>", lambda c: obj.winv.destroy())
-        obj.okButt.place(x = 160, y = 120)
+        obj.okButt.place(x = lw*0.4, y = 120)
 
         # ショートカット
         shortcut.define("menu", obj.winv, obj)

@@ -1,7 +1,7 @@
 import os
 import sys
 
-VERSION = "v0.5"
+VERSION = "v1.0"
 PARAM = os.path.dirname(sys.argv[0]) + "\param.json"
 SOURCE = "https://github.com/"
 btColorOk = "#83ccd2"

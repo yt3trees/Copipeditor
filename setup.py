@@ -7,10 +7,10 @@ if sys.platform == 'win32':
     base = 'Win32GUI'
 # Winデスクトップ出ない場合「CUI」の場合はif文をコメントアウト
 
-exe = Executable(script = "FileCopy.py", base= base, icon='icon/copytool.ico')
+exe = Executable(script = "Copipeditor.py", base= base, icon='icon/copytool.ico')
 # "test.py"にはexe化するファイルの名前を記載。
 
-setup(name = 'your_filename',
-    version = '0.1',
-    description = 'converter',
+setup(name = 'Copipeditor',
+    version = '1.0',
+    description = 'copy tool',
     executables = [exe])

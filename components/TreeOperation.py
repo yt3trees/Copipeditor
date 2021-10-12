@@ -1,6 +1,6 @@
 class TreeOperation:
     # 新規追加
-    def insert_tree(self, obj): 
+    def insert_tree(self, obj):
         i = 0
         m = ""
         num = len(obj.get_children()) # 全アイテム数
