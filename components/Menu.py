@@ -30,12 +30,12 @@ class Menu:
         editMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="編集", menu=editMenu)
         editMenu.add_command(label="追加", command = lambda : obj2.insert_tree(obj.tree), accelerator="Ctrl+N")
-        editMenu.add_command(label="削除", command = lambda : obj.delete_item(obj.tree), accelerator="Delete")
-        editMenu.add_command(label="全選択", command = lambda : obj.all_select_item(obj.tree), accelerator="Ctrl+A")
-        editMenu.add_command(label="上と並び替え", command = lambda : obj.move_up_item(obj.tree,"up"), accelerator="K")
-        editMenu.add_command(label="下と並び替え", command = lambda : obj.move_up_item(obj.tree,"down"), accelerator="J")
-        editMenu.add_command(label="上に複製", command = lambda : obj.copy_item(obj.tree, "up"), accelerator="Shift+Alt+K")
-        editMenu.add_command(label="下に複製", command = lambda : obj.copy_item(obj.tree, "down"), accelerator="Shift+Alt+J")
+        editMenu.add_command(label="削除", command = lambda : obj2.delete_item(obj.tree), accelerator="Delete")
+        editMenu.add_command(label="全選択", command = lambda : obj2.all_select_item(obj.tree), accelerator="Ctrl+A")
+        editMenu.add_command(label="上と並び替え", command = lambda : obj2.move_up_item(obj.tree,"up"), accelerator="K")
+        editMenu.add_command(label="下と並び替え", command = lambda : obj2.move_up_item(obj.tree,"down"), accelerator="J")
+        editMenu.add_command(label="上に複製", command = lambda : obj2.copy_item(obj.tree, "up"), accelerator="Shift+Alt+K")
+        editMenu.add_command(label="下に複製", command = lambda : obj2.copy_item(obj.tree, "down"), accelerator="Shift+Alt+J")
         # 実行タブ
         execMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="実行", menu=execMenu)
@@ -51,7 +51,7 @@ class Menu:
 
     def open_version(self, obj, shortcut):
         obj.winv = tk.Toplevel()
-        lw = 400
+        lw = 430
         lh = 150
         obj.winv.geometry(str(lw)+"x"+str(lh)+"+"+str(int(obj.ww/2-lw/2-10))+"+"+str(int(obj.wh/2-lh/2-15)))
         #obj.winv.geometry("400x150+975+575")
@@ -84,7 +84,7 @@ class Menu:
         obj.labelPython.grid(row= 3 , column = 1, sticky = "NW")
         obj.okButt = tk.Button(obj.winv, text = "OK", width=10)
         obj.okButt.bind("<Button-1>", lambda c: obj.winv.destroy())
-        obj.okButt.place(x = lw*0.4, y = 120)
+        obj.okButt.place(x = 175, y = 120)
 
         # ショートカット
         shortcut.define("menu", obj.winv, obj)

@@ -3,7 +3,7 @@ import sys
 
 VERSION = "v1.0"
 PARAM = os.path.dirname(sys.argv[0]) + "\param.json"
-SOURCE = "https://github.com/"
+SOURCE = "https://github.com/yt3trees/Copipeditor"
 btColorOk = "#83ccd2"
 btColorDel = "#f6bfbc"
 btColorCan = "#c0c6c9"
