@@ -11,7 +11,8 @@ import glob
 import datetime
 from ttkwidgets import CheckboxTreeview
 import threading
-# コンポーネント
+import argparse
+
 from components import TreeOperation
 from components import Shortcut
 from components import Menu
@@ -142,18 +143,22 @@ class Application(tk.Frame):
                 mbox.showwarning("アラート", "実行対象を選択してください。")
                 return "break"
 
+            i = 0
+            id = []
+            fromPath = []
+            toPath = []
             for item in self.tree.get_checked(): # 各パスの存在確認
                 row_data = self.tree.item(item) # 行データの取得
                 row_value = row_data['values'] # 列データの取得
-                id = row_data['text']
-                fromPath = row_value[0]
-                toPath = row_value[1]
-                if not os.path.exists(fromPath):
-                    message = "パス'" + fromPath + "'は存在しません。\n処理を中止します。"
+                id.append(row_data['text'])
+                fromPath.append(row_value[0])
+                toPath.append(row_value[1])
+                if not os.path.exists(fromPath[i]):
+                    message = "パス'" + fromPath[i] + "'は存在しません。\n処理を中止します。"
                     mbox.showerror("エラー", message)
                     return "break"
-                if not os.path.exists(toPath):
-                    message = "パス'" + toPath + "'は存在しません。\n処理を中止します。"
+                if not os.path.exists(toPath[i]):
+                    message = "パス'" + toPath[i] + "'は存在しません。\n処理を中止します。"
                     mbox.showerror("エラー", message)
                     return "break"
 
@@ -171,10 +176,13 @@ class Application(tk.Frame):
                 self.progress_bar("start") # プログレスバー表示
                 logFolderNow = self.bkEnt.get()+ "/" + dateNow
                 selected_items = self.tree.get_checked() # 行データの取得
-                print (selected_items)
+                print(">>コピー処理を開始します。\n■実行対象:", selected_items)
+
+                x = 0
                 for item in selected_items:
+                    print("\n----------\n■処理アイテム:", item)
                     # フォルダ生成
-                    logFolderNowID = logFolderNow + "_" + id
+                    logFolderNowID = logFolderNow + "_" + id[x]
                     logFolderNowFrom = logFolderNowID + "/" + "After"
                     logFolderNowTo = logFolderNowID + "/" + "Before"
                     if self.bkEnt.get() != "バックアップ無し":
@@ -182,12 +190,10 @@ class Application(tk.Frame):
                             os.makedirs(logFolderNowFrom)
                         if not os.path.exists(logFolderNowTo):
                             os.makedirs(logFolderNowTo)
+                    os.chdir(toPath[x]) # toフォルダに移動
 
-                    os.chdir(toPath) # toフォルダに移動
-                    print("カレントディレクトリ:",os.getcwd())
-
-                    if os.path.exists(fromPath):
-                        searchPath = fromPath + "/**/*"
+                    if os.path.exists(fromPath[x]):
+                        searchPath = fromPath[x] + "/**/*"
                         i = []
                         files = ([p for p in glob.glob(searchPath, recursive=True)
                             if os.path.isfile(p)]) # コピー元ファイル一覧取得
@@ -195,30 +201,34 @@ class Application(tk.Frame):
                         # コピー先重複ファイルバックアップ処理
                         for file in files:
                             if self.bkEnt.get() != "バックアップ無し":
-                                print("From:",file) # コピー元ファイル名
-                                fileAfter = file.replace(fromPath, toPath) # コピー先ファイル存在確認用文字列生成
-                                print("To:",fileAfter) # コピー先ファイル名
-                                print("比較:", os.path.exists(fileAfter),"\r\n----------")
+                                print("\n", file, "から", sep = "") # コピー元ファイル名
+                                fileAfter = file.replace(fromPath[x], toPath[x]) # コピー先ファイル存在確認用文字列生成
+                                print(fileAfter, "にコピーします。") # コピー先ファイル名
                                 if os.path.exists(fileAfter):
-                                    toFile = fileAfter.replace(toPath, "")
+                                    toFile = fileAfter.replace(toPath[x], "")
                                     logFolderNowToFile = logFolderNowTo + "/" + toFile[1:]
-                                    print (">>",toFile[1:],"から",logFolderNowToFile,"にコピーします。")
                                     toFile = "./" + toFile
                                     if not os.path.exists(os.path.dirname(logFolderNowToFile)):
                                         os.makedirs(os.path.dirname(logFolderNowToFile))
                                     shutil.copy2(toFile, logFolderNowToFile)
-                                    print (">>",toFile[1:],"から",logFolderNowToFile,"にコピーしました。")
+                                    print ("コピー先重複ファイルを",logFolderNowToFile,"にコピーしました。")
 
                         if self.bkEnt.get() != "バックアップ無し":
-                            dir_util.copy_tree(fromPath, logFolderNowFrom) # コピー元ファイルをバックアップフォルダにコピー
-                        dir_util.copy_tree(fromPath, toPath)
+                            dir_util.copy_tree(fromPath[x], logFolderNowFrom) # コピー元ファイルをバックアップフォルダにコピー
+                        dir_util.copy_tree(fromPath[x], toPath[x])
                         if self.checkDel_v.get() == True: # コピー元削除チェックボックスがオンの場合
-                            self.delete_from_files(fromPath)
-                        print ('実行：',fromPath, "→" ,toPath)
+                            self.delete_from_files(fromPath[x])
+                            print ("\n>>コピー元ファイルを削除しました。")
+                        if not files:
+                            print("コピー元にファイルが存在していません。")
+                        else:
+                            print ('\n>>ファイルをコピーしました。',fromPath[x], "->" ,toPath[x])
                         dir_util._path_created = {} # キャッシュをクリア
+                        x += 1
                     else:
-                        message = "パス'" + fromPath + "'は存在しません。"
+                        message = "パス'" + fromPath[x] + "'は存在しません。"
                         mbox.showerror("エラー", message)
+                        x += 1
                         return "break"
                 self.progress_bar("stop") # プログレスバー終了
                 mbox.showinfo("アラート", "処理完了しました。")
@@ -227,6 +237,8 @@ class Application(tk.Frame):
             return "break"
         except Exception as e:
             self.error_message(e)
+            if(self.progress_bar):
+                self.progress_bar("stop")
 
     def save_item(self):
         msbox = mbox.askokcancel("確認", "設定を保存します。")
@@ -440,6 +452,24 @@ class Application(tk.Frame):
         menu.create_menu(self, treeOpe, shortcut)
         #menu.open_version(self, shortcut)
 
-root = tk.Tk()
-app = Application(master=root)
-app.mainloop()
+
+# regionコマンド実行
+# オブジェクト生成
+parser = argparse.ArgumentParser(description="ファイルをフォルダごとコピーするプログラムです。\
+                                    コマンドライン引数を渡さずに実行した場合はGUIが起動します。")
+# オプション引数
+parser.add_argument('--all', action = 'store_true', help="登録している全てのアイテムのコピーが実行されます。")
+parser.add_argument('--copy', nargs='*', type = str, help="コピー処理実行対象を複数指定できます。Ex)--copy red blue yellow")
+#parser.add_argument('--log', type = str, help="処理結果のテキストファイルを出力したい場合は出力先フォルダを指定してください。")
+args = parser.parse_args()
+if args.copy != None:
+    print("実行対象アイテム")
+    for i in args.copy:
+        print('>',i)
+# endregion
+
+# 引数がない場合はGUI起動
+if (args.all == False and args.copy == None):
+    root = tk.Tk()
+    app = Application(master=root)
+    app.mainloop()
