@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox as mbox
 import os
+import sys
 import shutil
 from distutils import dir_util
 from tkinter import filedialog
@@ -156,14 +157,16 @@ class Application(tk.Frame):
                 if not os.path.exists(fromPath[i]):
                     message = "パス'" + fromPath[i] + "'は存在しません。\n処理を中止します。"
                     mbox.showerror("エラー", message)
-                    return "break"
+                    print (">>", message, sep = "")
+                    return
                 if not os.path.exists(toPath[i]):
                     message = "パス'" + toPath[i] + "'は存在しません。\n処理を中止します。"
                     mbox.showerror("エラー", message)
-                    return "break"
+                    print (">>", message, sep = "")
+                    return
+                i += 1
 
             today = str(datetime.date.today()).replace("-", "") # yyyymmdd
-            t = str(datetime.datetime.now().time())[0:6]
             time = str(datetime.datetime.now().time())[0:6].replace(":","")
             dateNow = today + time
 
@@ -172,11 +175,11 @@ class Application(tk.Frame):
                 delMsg = "\n※コピー後元のファイルは削除されます。"
 
             msbox = mbox.askokcancel("確認", "コピーを実行します。" + delMsg)
-            if msbox == True: # OKボタン押下
+            if msbox == True: # OKボタン押下 TODO:以下別pyファイルに移動
                 self.progress_bar("start") # プログレスバー表示
                 logFolderNow = self.bkEnt.get()+ "/" + dateNow
                 selected_items = self.tree.get_checked() # 行データの取得
-                print(">>コピー処理を開始します。\n■実行対象:", selected_items)
+                print(">>コピー処理を開始します。\n■実行対象:", selected_items) #TODO:ID[x]から取得
 
                 x = 0
                 for item in selected_items:
@@ -220,7 +223,7 @@ class Application(tk.Frame):
                             self.delete_from_files(fromPath[x])
                             print ("\n>>コピー元ファイルを削除しました。")
                         if not files:
-                            print("コピー元にファイルが存在していません。")
+                            print ("コピー元にファイルが存在していません。")
                         else:
                             print ('\n>>ファイルをコピーしました。',fromPath[x], "->" ,toPath[x])
                         dir_util._path_created = {} # キャッシュをクリア
@@ -232,13 +235,12 @@ class Application(tk.Frame):
                         return "break"
                 self.progress_bar("stop") # プログレスバー終了
                 mbox.showinfo("アラート", "処理完了しました。")
+                print ("処理完了しました。")
             else:
                 return "break"
             return "break"
         except Exception as e:
             self.error_message(e)
-            if(self.progress_bar):
-                self.progress_bar("stop")
 
     def save_item(self):
         msbox = mbox.askokcancel("確認", "設定を保存します。")
@@ -469,7 +471,7 @@ if args.copy != None:
 # endregion
 
 # 引数がない場合はGUI起動
-if (args.all == False and args.copy == None):
+if len(sys.argv) <= 1:
     root = tk.Tk()
     app = Application(master=root)
     app.mainloop()
