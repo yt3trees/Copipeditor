@@ -1,3 +1,6 @@
+'''
+Tree操作モジュール
+'''
 class TreeOperation:
     # 新規追加
     def insert_tree(self, obj):

@@ -1,16 +1,21 @@
 {
     "logFolder": "C:/work/dev/python/テスト/!bk",
     "0": {
-        "id": "あああ",
+        "id": "テスト1",
         "from": "C:/work/dev/python/テスト/test/from",
         "to": "C:/work/dev/python/テスト/test/to"
     },
     "1": {
-        "id": "いいい",
+        "id": "テスト2",
+        "from": "C:/work/dev/python/テスト/テスト/フロム",
+        "to": "C:/work/dev/python/テスト/テスト/トゥー"
+    },
+    "2": {
+        "id": "テスト3",
         "from": "C:\\work\\dev\\python\\テスト\\test - コピーa",
         "to": "C:\\work\\dev\\python\\テスト\\test - コピー\\to"
     },
-    "2": {
+    "3": {
         "id": "キャプチャ",
         "from": "C:\\Users\\yatfo\\Videos\\Captures",
         "to": "C:/work/dev/python/テスト/キャプチャ"

@@ -1,3 +1,6 @@
+'''
+グローバル変数用モジュール
+'''
 import os
 import sys
 

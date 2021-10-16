@@ -1,21 +1,22 @@
+'''
+メニュー生成モジュール
+'''
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import Checkbutton, messagebox as mbox
 import os
 import webbrowser
 import sys
-from components import Global
-from components import Shortcut
+from . import Global
+from . import Shortcut
 
 VERSION = Global.VERSION
 PARAM = Global.PARAM
 SOURCE = Global.SOURCE
 ICON = Global.ICON
 
-shortcut = Shortcut.Shortcut()
-
 class Menu:
-    def create_menu(self, obj, obj2 ,shortcut):
+    def create_menu(self, obj):
         # メニュー
         menubar = tk.Menu(obj)
         obj.master.config(menu=menubar)
@@ -29,13 +30,13 @@ class Menu:
         # 編集タブ
         editMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="編集", menu=editMenu)
-        editMenu.add_command(label="追加", command = lambda : obj2.insert_tree(obj.tree), accelerator="Ctrl+N")
-        editMenu.add_command(label="削除", command = lambda : obj2.delete_item(obj.tree), accelerator="Delete")
-        editMenu.add_command(label="全選択", command = lambda : obj2.all_select_item(obj.tree), accelerator="Ctrl+A")
-        editMenu.add_command(label="上と並び替え", command = lambda : obj2.move_up_item(obj.tree,"up"), accelerator="K")
-        editMenu.add_command(label="下と並び替え", command = lambda : obj2.move_up_item(obj.tree,"down"), accelerator="J")
-        editMenu.add_command(label="上に複製", command = lambda : obj2.copy_item(obj.tree, "up"), accelerator="Shift+Alt+K")
-        editMenu.add_command(label="下に複製", command = lambda : obj2.copy_item(obj.tree, "down"), accelerator="Shift+Alt+J")
+        editMenu.add_command(label="追加", command = lambda : obj.treeOpe.insert_tree(obj.tree), accelerator="Ctrl+N")
+        editMenu.add_command(label="削除", command = lambda : obj.treeOpe.delete_item(obj.tree), accelerator="Delete")
+        editMenu.add_command(label="全選択", command = lambda : obj.treeOpe.all_select_item(obj.tree), accelerator="Ctrl+A")
+        editMenu.add_command(label="上と並び替え", command = lambda : obj.treeOpe.move_up_item(obj.tree,"up"), accelerator="K")
+        editMenu.add_command(label="下と並び替え", command = lambda : obj.treeOpe.move_up_item(obj.tree,"down"), accelerator="J")
+        editMenu.add_command(label="上に複製", command = lambda : obj.treeOpe.copy_item(obj.tree, "up"), accelerator="Shift+Alt+K")
+        editMenu.add_command(label="下に複製", command = lambda : obj.treeOpe.copy_item(obj.tree, "down"), accelerator="Shift+Alt+J")
         # 実行タブ
         execMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="実行", menu=execMenu)
@@ -44,16 +45,16 @@ class Menu:
         helpMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="ヘルプ", menu=helpMenu)
         helpMenu.add_command(label="FAQ", command=self.open_faq)
-        helpMenu.add_command(label="バージョン情報", command = lambda : self.open_version(obj, shortcut))
+        helpMenu.add_command(label="バージョン情報", command = lambda : self.open_version(obj))
 
     def open_faq(self):
         return
 
-    def open_version(self, obj, shortcut):
+    def open_version(self, obj):
         obj.winv = tk.Toplevel()
         lw = 430
         lh = 150
-        obj.winv.geometry(str(lw)+"x"+str(lh)+"+"+str(int(obj.ww/2-lw/2-10))+"+"+str(int(obj.wh/2-lh/2-15)))
+        obj.winv.geometry(str(lw)+"x"+str(lh)+"+"+str(int(Global.ww/2-lw/2-10))+"+"+str(int(Global.wh/2-lh/2-15)))
         #obj.winv.geometry("400x150+975+575")
         obj.winv.title("バージョン情報")
         obj.winv.grab_set()
@@ -87,7 +88,8 @@ class Menu:
         obj.okButt.place(x = 175, y = 120)
 
         # ショートカット
-        shortcut.define("menu", obj.winv, obj)
+        shortcut = Shortcut.Shortcut()
+        shortcut.define("menu", obj)
 
     def link_open(self):
         msbox = mbox.askokcancel("確認", "ブラウザでリンクを開きます。\r\n" + SOURCE)
