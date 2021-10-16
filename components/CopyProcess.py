@@ -1,7 +1,6 @@
 '''
 コピー処理実行モジュール
 '''
-
 import tkinter as tk
 import tkinter.ttk as ttk
 import os
@@ -15,6 +14,7 @@ class CopyProcess:
     def exec_copy(self, id:list, fromPath:list, toPath:list, logFolderNow:str, bkFlg:bool, delFlg:bool):
         '''
         コピー処理の実行
+
         Args:
             id (list): 処理するアイテムのID
             fromPath (list): 処理するアイテムのコピー元フォルダパス

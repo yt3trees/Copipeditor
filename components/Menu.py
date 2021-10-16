@@ -10,11 +10,6 @@ import sys
 from . import Global
 from . import Shortcut
 
-VERSION = Global.VERSION
-PARAM = Global.PARAM
-SOURCE = Global.SOURCE
-ICON = Global.ICON
-
 class Menu:
     def create_menu(self, obj):
         # メニュー
@@ -62,16 +57,16 @@ class Menu:
         obj.winv.focus_set()
 
         # アイコン
-        obj.img = tk.PhotoImage(data = ICON)
+        obj.img = tk.PhotoImage(data = Global.ICON)
         obj.img = obj.img.subsample(6, 6) # 縮小
         obj.canvas = tk.Canvas(obj.winv, width = 90, height = 90)
         obj.canvas.grid(row= 0 , column = 0, rowspan=10)
         obj.canvas.create_image(0 , 0, image = obj.img, anchor = tk.NW)
 
         # ツール情報
-        title = 'Copipeditor ' + VERSION
+        title = 'Copipeditor ' + Global.VERSION
         versionInfo = 'Copyright © 2021 ytmori All rights reserved.'
-        versionInfo2 = 'Source： ' + SOURCE
+        versionInfo2 = 'Source： ' + Global.SOURCE
         versionInfo3 = 'Python： v3.9.7'
 
         obj.label = tk.Label(obj.winv, font=("MSゴシック", "14"), text = title, justify='left')
@@ -92,9 +87,9 @@ class Menu:
         shortcut.define("menu", obj)
 
     def link_open(self):
-        msbox = mbox.askokcancel("確認", "ブラウザでリンクを開きます。\r\n" + SOURCE)
+        msbox = mbox.askokcancel("確認", "ブラウザでリンクを開きます。\r\n" + Global.SOURCE)
         if msbox == True:
-            webbrowser.open(SOURCE)
+            webbrowser.open(Global.SOURCE)
 
     def add_startmenu(obj):
         try:

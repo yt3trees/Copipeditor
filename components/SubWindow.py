@@ -1,10 +1,11 @@
-'''アイテム編集ウィンドウ・詳細設定ウィンドウ生成モジュール'''
+'''
+サブウィンドウ生成モジュール
+'''
 import tkinter as tk
 from . import Global
 from . import Shortcut
 
 sc = Shortcut.Shortcut()
-
 class SubWindow:
     def open_edit(self, obj): # https://try2explore.com/questions/jp/12101569
         if () == obj.tree.selection(): return
@@ -74,7 +75,6 @@ class SubWindow:
         obj.win.protocol('WM_DELETE_WINDOW', lambda : self.close_window(obj, obj.win))
 
         # ショートカット
-        # sc.define("entry", obj, obj.win)
         sc.define("entry", obj)
 
     def delete_button(self, obj):

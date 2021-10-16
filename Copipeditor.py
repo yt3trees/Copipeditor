@@ -7,13 +7,13 @@ from tkinter import filedialog
 import json
 from typing import Text
 import datetime
-from ttkwidgets import CheckboxTreeview
 import threading
 import argparse
 
 from components import Global
-from components import TreeOperation
+from components import MainWindow
 from components import SubWindow
+from components import TreeOperation
 from components import CopyProcess
 from components import Menu
 from components import Shortcut
@@ -37,8 +37,9 @@ class Application(tk.Frame):
         self.master.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(data=Global.ICON))
 
         self.win = None # サブメニュー重複対策
-        self.create_widgets()
+        self.mainWin = MainWindow.MainWindow(self) # メインウィンドウ生成
         self.menu.create_menu(self)
+
         # jsonファイル読み込み
         try:
             if os.path.exists(Global.PARAM):
@@ -57,67 +58,6 @@ class Application(tk.Frame):
             self.error_message(e)
             self.master.destroy()
 
-# region---------------------------------------- メイン画面 ---------------------------------------- #
-    def create_widgets(self):
-        self.tree = CheckboxTreeview(self)
-        self.tree["columns"] = (1,2)
-        self.tree["show"] = "tree","headings"
-
-        self.tree.heading("#0",text="ID",command = lambda : self.treeOpe.all_select_item(self.tree))
-        # self.tree.heading(1,text="ID")
-        self.tree.heading(1,text="コピー元")
-        self.tree.heading(2,text="コピー先")
-        self.tree.column("#0",width=120)
-        # self.tree.column(1,width=65)
-        self.tree.column(1,width=290)
-        self.tree.column(2,width=290)
-        self.tree.bind('<Double-1>', lambda c: self.subWin.open_edit(self)) # ダブルクリック
-        self.tree.grid(row=0, column=0, sticky=tk.EW, padx=10, pady=5, columnspan=5)
-
-        self.addButt = tk.Button(self, text="追加", width=20)
-        self.addButt.bind("<Button-1>", lambda c: self.treeOpe.insert_tree(self.tree))
-        self.addButt.grid(row=2, column=0, sticky="E", pady=5)
-
-        self.delButt = tk.Button(self, text = "削除", width=20, bg = Global.btColorDel)
-        self.delButt.bind("<Button-1>", lambda c: self.treeOpe.delete_item(self.tree))
-        self.delButt.grid(row=2, column=1, sticky="E")
-
-        self.allButt = tk.Button(self, text="全選択/全解除", width=20)
-        self.allButt.bind("<Button-1>", lambda c: self.treeOpe.all_select_item(self.tree))
-        self.allButt.grid(row=2, column=2, sticky="E")
-
-        self.button = tk.Button(self, text="実行", width=20, bg = Global.btColorOk)
-        self.button.bind("<Button-1>", lambda c: self.copy_callback())
-        self.button.grid(row=2, column=3, sticky="E")
-
-        self.saveButt = tk.Button(self, text = "保存", width=20)
-        self.saveButt.bind("<Button-1>", lambda c: self.save_item())
-        self.saveButt.grid(row=2, column=4, sticky="E")
-
-        self.bkLbl = tk.Label(self, text = "バックアップフォルダ: ") # TODO:チェックボックスで使用可否制御
-        self.bkLbl.grid(row = 1, column = 0)
-        self.bkEnt = tk.Entry(self, width = 74)
-        self.bkEnt.grid(row = 1, column = 1, sticky="W", pady=0, columnspan=3)
-        self.bkFolderButt = tk.Button(self, text = "フォルダ", width = 9)
-        self.bkFolderButt.bind("<Button-1>", lambda e: self.folder_dialog(self.bkEnt))
-        self.bkFolderButt.grid(row = 1, column = 4, sticky = "W")
-
-        self.check_v = tk.BooleanVar()
-        self.check_v.set( True )
-        self.bkEntValue = self.bkEnt.get()
-        self.checkDel_v = tk.BooleanVar()
-        self.checkDel_v.set( False )
-
-        self.settButt = tk.Button(self, text = "詳細設定", width = 9)
-        self.settButt.bind("<Button-1>", lambda e: self.subWin.advanced_setting(self))
-        self.settButt.place(x = 675, y = 236.5)
-
-        self.kakushiLbl = tk.Label(self.win, text = "( ^_^)b", font=("メイリオ", "25"))
-        self.kakushiLbl.place(x=1000,y=500)
-
-        # ショートカット
-        self.shortcut.define("main", self)
-
     def copy_callback(self):
         '''exec_copyを別スレッドで実行するための関数'''
         thread = threading.Thread(target=self.exec_copy)
@@ -129,11 +69,17 @@ class Application(tk.Frame):
             if self.tree.get_checked() == []: # アイテムが1つも選択されていない場合
                 mbox.showwarning("アラート", "実行対象を選択してください。")
                 return "break"
+
+            today = str(datetime.date.today()).replace("-", "") # yyyymmdd
+            time = str(datetime.datetime.now().time())[0:6].replace(":","")
+            dateNow = today + time
+            logFolderNow = self.bkEnt.get()+ "/" + dateNow
             i = 0
             id = []
             fromPath = []
             toPath = []
-            for item in self.tree.get_checked(): # 各パスの存在確認
+            # 各パスの存在確認
+            for item in self.tree.get_checked():
                 row_data = self.tree.item(item) # 行データの取得
                 row_value = row_data['values'] # 列データの取得
                 id.append(row_data['text'])
@@ -151,21 +97,25 @@ class Application(tk.Frame):
                     return
                 i += 1
 
-            today = str(datetime.date.today()).replace("-", "") # yyyymmdd
-            time = str(datetime.datetime.now().time())[0:6].replace(":","")
-            dateNow = today + time
+            # コピー元削除チェックボックスがオンの場合に確認ダイアログのメッセージ追加
+            addMsg = ""
+            if self.checkDel_v.get() == True:
+                addMsg += "\n※コピー後元のファイルは削除"
+                delFlg = True
+            else:
+                delFlg = False
 
-            delMsg = ""
-            if self.checkDel_v.get() == True: # コピー元削除チェックボックスがオンの場合
-                delMsg = "\n※コピー後元のファイルは削除されます。"
+            # バックアップ実行可否フラグ
+            if self.check_v.get() == True:
+                bkFlg = True
+            else:
+                addMsg += "\n※バックアップ無し"
+                bkFlg = False
 
-            msbox = mbox.askokcancel("確認", "コピーを実行します。" + delMsg)
+            # 確認ダイアログ
+            msbox = mbox.askokcancel("確認", "コピーを実行します。" + addMsg)
             if msbox == True: # OKボタン押下
-                logFolderNow = self.bkEnt.get()+ "/" + dateNow
-                if self.bkEnt.get() != "バックアップ無し": bkFlg = True
-                else: bkFlg = False
-                delFlg = self.checkDel_v.get()
-
+                # コピー処理実行
                 cp = CopyProcess.CopyProcess()
                 cp.exec_copy(id, fromPath, toPath, logFolderNow, bkFlg, delFlg)
             else:
@@ -224,7 +174,7 @@ class Application(tk.Frame):
             self.bkFolderPathBack = self.bkEntValue
             ent.insert(tk.END, "バックアップ無し")
             ent.configure(state='readonly')
-# endregion
+
     def folder_dialog(self,obj):
         '''フォルダ選択ダイアログの起動'''
         try:
