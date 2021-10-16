@@ -4,7 +4,6 @@ from tkinter import messagebox as mbox
 import os
 import sys
 from tkinter import filedialog
-import json
 from typing import Text
 import datetime
 import threading
@@ -41,22 +40,16 @@ class Application(tk.Frame):
         self.menu.create_menu(self)
 
         # jsonファイル読み込み
-        try:
-            if os.path.exists(Global.PARAM):
-                jsonOpen = open(Global.PARAM,"r")
-                jsonLoad = json.load(jsonOpen)
-                i = 0
-                for j in jsonLoad.values():
-                    if i == 0:
-                        self.logFolder = jsonLoad.get('logFolder')
-                        self.bkEnt.insert(tk.END, self.logFolder)
-                    else:
-                        self.tree.insert("", "end", iid=j['id'], text=j['id'], values=( j['from'], j['to']))
-                    i = i + 1
-        except Exception as e:
-            e = "jsonファイルの読み込みに失敗しました。\n" + str(e)
-            self.error_message(e)
-            self.master.destroy()
+        self.jsonOpe = Global.JsonOperation()
+        jsonValues = self.jsonOpe.load_json(self)
+        i = 0
+        for j in jsonValues.values():
+            if i == 0:
+                self.logFolder = jsonValues.get('logFolder')
+                self.bkEnt.insert(tk.END, self.logFolder)
+            else:
+                self.tree.insert("", "end", iid=j['id'], text=j['id'], values=( j['from'], j['to']))
+            i += 1
 
     def copy_callback(self):
         '''exec_copyを別スレッドで実行するための関数'''
@@ -135,9 +128,9 @@ class Application(tk.Frame):
 
                 i = 0
                 if self.check_v.get() == True or self.bkFolderPathBack==None:
-                    a = {'logFolder':self.bkEnt.get()}
+                    aaa = {'logFolder':self.bkEnt.get()}
                 else:
-                    a = {'logFolder':self.bkFolderPathBack}
+                    aaa = {'logFolder':self.bkFolderPathBack}
                 for item in selected_items:
                     row_data = self.tree.item(item)
                     row_value = row_data['values']
@@ -145,11 +138,11 @@ class Application(tk.Frame):
                     if row_data['text'] == '':
                         raise ValueError("IDが入力されていないデータが存在します。")
 
-                    a[i] = {'id':row_data['text'],'from':row_value[0],'to':row_value[1]}
+                    aaa[i] = {'id':row_data['text'],'from':row_value[0],'to':row_value[1]}
                     i += 1
 
-                with open(Global.PARAM, 'w') as f:
-                    json.dump(a, f, indent=4, ensure_ascii=False)
+                with open(Global.PARAM, 'w') as fff:
+                    self.jsonOpe.save_json(aaa, fff, 4, False) # json.dump(aaa, fff, indent=4, ensure_ascii=False)
 
                 self.tree.selection_remove(self.tree.selection())
                 mbox.showinfo('確認', '保存しました。')

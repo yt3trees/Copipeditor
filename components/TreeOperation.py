@@ -24,7 +24,7 @@ class TreeOperation:
         obj.insert("", "end", iid=i, text=i, value=("","",""))
         return "break"
 
-    # チェックオンオフ判定
+    # チェックボックスオンオフ切り替え
     def check_item(self, obj):
         for item in obj.selection():
             if obj.tag_has('unchecked', item):
