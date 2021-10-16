@@ -41,15 +41,15 @@ class Application(tk.Frame):
 
         # jsonファイル読み込み
         self.jsonOpe = Global.JsonOperation()
-        jsonValues = self.jsonOpe.load_json(self)
-        i = 0
-        for j in jsonValues.values():
-            if i == 0:
-                self.logFolder = jsonValues.get('logFolder')
-                self.bkEnt.insert(tk.END, self.logFolder)
-            else:
-                self.tree.insert("", "end", iid=j['id'], text=j['id'], values=( j['from'], j['to']))
-            i += 1
+        if os.path.exists(Global.PARAM):
+            jsonValues = self.jsonOpe.load_json(self)
+            i = 0
+            for j in jsonValues.values():
+                if i == 0:
+                    self.bkEnt.insert(tk.END, jsonValues.get('logFolder'))
+                else:
+                    self.tree.insert("", "end", iid=j['id'], text=j['id'], values=( j['from'], j['to']))
+                i += 1
 
     def copy_callback(self):
         '''exec_copyを別スレッドで実行するための関数'''
@@ -154,19 +154,6 @@ class Application(tk.Frame):
         '''エラーメッセージ表示'''
         msg = "エラーが発生しました。\n" + str(message)
         mbox.showerror("Error!", msg)
-
-    def change_readonly(self, var, ent):
-        '''バックアップフォルダパスの書き込み許可切り替え'''
-        if var.get() == False:
-            ent.configure(state='normal')
-            ent.delete(0,tk.END)
-            ent.insert(tk.END, self.bkEntValue)
-        elif var.get() == True:
-            self.bkEntValue = ent.get()
-            ent.delete(0,tk.END)
-            self.bkFolderPathBack = self.bkEntValue
-            ent.insert(tk.END, "バックアップ無し")
-            ent.configure(state='readonly')
 
     def folder_dialog(self,obj):
         '''フォルダ選択ダイアログの起動'''
