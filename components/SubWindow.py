@@ -5,7 +5,7 @@ from . import Shortcut
 
 sc = Shortcut.Shortcut()
 
-class EditWindow:
+class SubWindow:
     def open_edit(self, obj): # https://try2explore.com/questions/jp/12101569
         if () == obj.tree.selection(): return
         if obj.win == None: # 重複して開かない

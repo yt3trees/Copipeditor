@@ -1,7 +1,7 @@
 '''
 ショートカットキー定義モジュール
 '''
-from . import EditWindow
+from . import SubWindow
 
 class Shortcut:
     def define(self, page, obj):
@@ -27,9 +27,9 @@ class Shortcut:
             obj.master.bind("<Button-3>", lambda c: obj.treeOpe.check_item(obj.tree)) # チェック
 
         if page == "entry": # 入力ページ
-            ew = EditWindow.EditWindow()
-            obj.win.bind("<Escape>", lambda c: ew.close_window(obj, obj.win)) # サブメニューを閉じる
-            obj.win.bind("<Return>", lambda e: ew.update_then_destroy()) # 入力内容確定
+            sw = SubWindow.SubWindow()
+            obj.win.bind("<Escape>", lambda c: sw.close_window(obj, obj.win)) # サブメニューを閉じる
+            obj.win.bind("<Return>", lambda e: sw.update_then_destroy(obj)) # 入力内容確定
 
         if page == "menu": # メニュー関連ページ
             obj.winv.bind("<Escape>", lambda c: obj.winv.destroy()) # サブメニューを閉じる

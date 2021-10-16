@@ -13,7 +13,7 @@ import argparse
 
 from components import Global
 from components import TreeOperation
-from components import EditWindow
+from components import SubWindow
 from components import CopyProcess
 from components import Menu
 from components import Shortcut
@@ -24,7 +24,7 @@ class Application(tk.Frame):
         self.treeOpe = TreeOperation.TreeOperation()
         self.shortcut = Shortcut.Shortcut()
         self.menu = Menu.Menu()
-        self.editWin = EditWindow.EditWindow()
+        self.subWin = SubWindow.SubWindow()
 
         tk.Frame.__init__(self, master)
         self.pack(expand=1, fill=tk.BOTH, anchor=tk.NW)
@@ -71,7 +71,7 @@ class Application(tk.Frame):
         # self.tree.column(1,width=65)
         self.tree.column(1,width=290)
         self.tree.column(2,width=290)
-        self.tree.bind('<Double-1>', lambda c: self.editWin.open_edit(self)) # ダブルクリック
+        self.tree.bind('<Double-1>', lambda c: self.subWin.open_edit(self)) # ダブルクリック
         self.tree.grid(row=0, column=0, sticky=tk.EW, padx=10, pady=5, columnspan=5)
 
         self.addButt = tk.Button(self, text="追加", width=20)
@@ -86,7 +86,7 @@ class Application(tk.Frame):
         self.allButt.bind("<Button-1>", lambda c: self.treeOpe.all_select_item(self.tree))
         self.allButt.grid(row=2, column=2, sticky="E")
 
-        self.button = tk.Button(self, text="実行", width=20, bg = Global.btColorOk) # TODO:コピー元削除制御
+        self.button = tk.Button(self, text="実行", width=20, bg = Global.btColorOk)
         self.button.bind("<Button-1>", lambda c: self.copy_callback())
         self.button.grid(row=2, column=3, sticky="E")
 
@@ -109,7 +109,7 @@ class Application(tk.Frame):
         self.checkDel_v.set( False )
 
         self.settButt = tk.Button(self, text = "詳細設定", width = 9)
-        self.settButt.bind("<Button-1>", lambda e: EditWindow.EditWindow.advanced_setting(self))
+        self.settButt.bind("<Button-1>", lambda e: self.subWin.advanced_setting(self))
         self.settButt.place(x = 675, y = 236.5)
 
         self.kakushiLbl = tk.Label(self.win, text = "( ^_^)b", font=("メイリオ", "25"))
