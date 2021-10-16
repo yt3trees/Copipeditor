@@ -2,7 +2,8 @@
 ショートカットキー定義モジュール
 '''
 from . import SubWindow
-
+from logging import getLogger, StreamHandler, DEBUG, FileHandler
+logger = getLogger(__name__)
 class Shortcut:
     def define(self, page, obj):
         '''

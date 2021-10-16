@@ -1,9 +1,11 @@
 '''
-グローバル変数用モジュール
+共通変数・関数用モジュール
 '''
 import os
 import sys
 import json
+from logging import getLogger, StreamHandler, DEBUG, FileHandler
+logger = getLogger(__name__)
 
 VERSION = "v1.0"
 PARAM = os.path.dirname(sys.argv[0]) + "\param.json"
@@ -17,6 +19,12 @@ ICON = 'R0lGODlhAAIAAvIAAAAAAP97Uf+RWi6A/jSZ/wAAAAAAAAAAACH5BAEAAAAAIf8LSW1hZ2VN
 
 class JsonOperation:
     def load_json(self, obj):
+        '''
+        jsonファイルの読み込み
+
+        Args:
+            obj : 呼び出し元インスタンス
+        '''
         try:
             if os.path.exists(PARAM):
                 jsonOpen = open(PARAM,"r")
@@ -24,8 +32,22 @@ class JsonOperation:
                 return jsonLoad
         except Exception as e:
             e = "jsonファイルの読み込みに失敗しました。\n" + str(e)
+            logger.info(e)
             obj.error_message(e)
             obj.master.destroy()
 
     def save_json(self, dict:dict, jsonfile:str, ind:int, ascii:bool):
-        json.dump(dict, jsonfile, indent=ind, ensure_ascii=ascii)
+        '''
+        jsonファイルに保存
+
+        Args:
+            dict (dict): 保存する辞書データ
+            jsonfile (str): 保存先ファイルパス
+            ind (int): インデントの文字数
+            ascii (bool): Trueなら非ASCII文字をエスケープ
+        '''
+        try:
+            json.dump(dict, jsonfile, indent=ind, ensure_ascii=ascii)
+        except Exception as e:
+            e = "jsonファイルの書き込みに失敗しました。\n" + str(e)
+            logger.info(e)

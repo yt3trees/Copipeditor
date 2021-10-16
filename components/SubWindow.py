@@ -4,6 +4,8 @@
 import tkinter as tk
 from . import Global
 from . import Shortcut
+from logging import getLogger, StreamHandler, DEBUG, FileHandler
+logger = getLogger(__name__)
 
 sc = Shortcut.Shortcut()
 class SubWindow:
@@ -119,7 +121,7 @@ class SubWindow:
         obj.winSet.focus_set()
 
         obj.winSet.checkBkFolder = tk.Checkbutton(obj.winSet, text="バックアップする", variable=obj.check_v)
-        obj.winSet.checkBkFolder.bind("<Button-1>", lambda e: obj.change_readonly(obj.check_v, obj.bkEnt))
+        obj.winSet.checkBkFolder.bind("<Button-1>", lambda e: self.change_readonly(obj, obj.check_v, obj.bkEnt))
         obj.winSet.checkBkFolder.grid(row = 0, column = 0, sticky = "W", pady=5, padx=15)
         obj.winSet.checkDelFromFile = tk.Checkbutton(obj.winSet, text="コピー元ファイル削除", variable=obj.checkDel_v)
         obj.winSet.checkDelFromFile.bind("<Button-1>", lambda e: self.change_setting_button_color(obj.checkDel_v, obj.settButt))
@@ -137,3 +139,16 @@ class SubWindow:
             btn.configure(bg=Global.btColorDel)
         elif var.get() == True:
             btn.configure(bg="#F0F0F0")
+
+    def change_readonly(self, obj, var, ent):
+        '''バックアップフォルダパスの書き込み許可切り替え'''
+        if var.get() == False:
+            ent.configure(state='normal')
+            ent.delete(0,tk.END)
+            ent.insert(tk.END, obj.bkEntValue)
+        elif var.get() == True:
+            obj.bkEntValue = ent.get()
+            ent.delete(0,tk.END)
+            obj.bkFolderPathBack = obj.bkEntValue
+            ent.insert(tk.END, "バックアップ無し")
+            ent.configure(state='readonly')

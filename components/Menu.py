@@ -2,13 +2,14 @@
 メニュー生成モジュール
 '''
 import tkinter as tk
-import tkinter.ttk as ttk
-from tkinter import Checkbutton, messagebox as mbox
+from tkinter import messagebox as mbox
 import os
 import webbrowser
 import sys
 from . import Global
 from . import Shortcut
+from logging import getLogger, StreamHandler, DEBUG, FileHandler
+logger = getLogger(__name__)
 
 class Menu:
     def create_menu(self, obj):
@@ -92,9 +93,10 @@ class Menu:
             webbrowser.open(Global.SOURCE)
 
     def add_startmenu(obj):
+        '''スタートメニューにアプリを追加'''
         try:
             cmdFile = os.path.dirname(sys.argv[0]) + "/script/run_スタートメニューに追加.bat"
-            print (cmdFile)
+            logger.info(cmdFile)
             os.system(cmdFile)
         except Exception as e:
             obj.error_message(e)

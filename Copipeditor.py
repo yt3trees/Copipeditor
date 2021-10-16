@@ -17,6 +17,19 @@ from components import CopyProcess
 from components import Menu
 from components import Shortcut
 
+from logging import getLogger, StreamHandler, FileHandler, basicConfig, DEBUG, INFO
+with open("log.txt", 'w') as f: pass
+logger = getLogger(__name__)
+stream_handler = StreamHandler()
+stream_handler.setLevel(INFO)
+file_handler = FileHandler('log.txt')
+file_handler.setLevel(INFO)
+logger.setLevel(INFO)
+logger.addHandler(stream_handler)
+logger.addHandler(file_handler)
+logger.propagate = False
+basicConfig(level = DEBUG, handlers = [stream_handler, file_handler])
+
 class Application(tk.Frame):
     def __init__(self, master=None):
         # インスタンス化
@@ -81,12 +94,12 @@ class Application(tk.Frame):
                 if not os.path.exists(fromPath[i]):
                     message = "パス'" + fromPath[i] + "'は存在しません。\n処理を中止します。"
                     mbox.showerror("エラー", message)
-                    print (">>", message, sep = "")
+                    logger.info(message)
                     return
                 if not os.path.exists(toPath[i]):
                     message = "パス'" + toPath[i] + "'は存在しません。\n処理を中止します。"
-                    mbox.showerror("エラー", message)
-                    print (">>", message, sep = "")
+                    mbox.showerror("エラー" + message)
+                    logger.info(message)
                     return
                 i += 1
 
@@ -159,7 +172,7 @@ class Application(tk.Frame):
         '''フォルダ選択ダイアログの起動'''
         try:
             dir = obj.get()
-            print(dir)
+            logger.info(dir)
             fld = filedialog.askdirectory(initialdir = dir)
             if fld != "":
                 obj.delete(0,tk.END)
@@ -180,9 +193,9 @@ parser.add_argument('--copy', nargs='*', type = str, help="コピー処理実行
 #parser.add_argument('--log', type = str, help="処理結果のテキストファイルを出力したい場合は出力先フォルダを指定してください。")
 args = parser.parse_args()
 if args.copy != None:
-    print("実行対象アイテム")
+    logger.info("実行対象アイテム")
     for i in args.copy:
-        print('>',i)
+        logger.info('>',i)
 # endregion
 
 # 引数がない場合はGUI起動

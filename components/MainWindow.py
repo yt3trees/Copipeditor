@@ -4,7 +4,8 @@
 import tkinter as tk
 from ttkwidgets import CheckboxTreeview
 from . import Global
-
+from logging import getLogger, StreamHandler, DEBUG, FileHandler
+logger = getLogger(__name__)
 class MainWindow:
     def __init__(self, obj):
         obj.tree = CheckboxTreeview(obj)
