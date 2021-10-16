@@ -100,7 +100,8 @@ class CopyProcess:
             logger.info(">>処理が完了しました。\n")
         except Exception as e:
             self.error_message(e)
-            logger.info("処理を中止しました。\n" + e)
+            logger.info("処理を中止しました。")
+            logger.info(e)
             self.progress_bar("stop") # プログレスバー終了
 
     def progress_bar(self, param):

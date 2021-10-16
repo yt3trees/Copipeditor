@@ -8,6 +8,7 @@ from typing import Text
 import datetime
 import threading
 import argparse
+from logging import getLogger, StreamHandler, FileHandler, basicConfig, DEBUG, INFO
 
 from components import Global
 from components import MainWindow
@@ -17,8 +18,15 @@ from components import CopyProcess
 from components import Menu
 from components import Shortcut
 
-from logging import getLogger, StreamHandler, FileHandler, basicConfig, DEBUG, INFO
-with open("log.txt", 'w') as f: pass
+# ログファイルの日付が今日でない場合はクリア
+with open("log.txt") as f:
+    lines = f.read()
+    textDate = lines[0:10]
+if str(datetime.date.today()) != str(textDate):
+    with open("log.txt", "w") as f: pass
+
+# ロギング
+with open("log.txt", 'a') as f: print(str(datetime.date.today()) + " " + str(datetime.datetime.now().time())[0:5], file = f)
 logger = getLogger(__name__)
 stream_handler = StreamHandler()
 stream_handler.setLevel(INFO)
@@ -94,12 +102,12 @@ class Application(tk.Frame):
                 if not os.path.exists(fromPath[i]):
                     message = "パス'" + fromPath[i] + "'は存在しません。\n処理を中止します。"
                     mbox.showerror("エラー", message)
-                    logger.info(message)
+                    logger.info(message.replace("\n",""))
                     return
                 if not os.path.exists(toPath[i]):
                     message = "パス'" + toPath[i] + "'は存在しません。\n処理を中止します。"
                     mbox.showerror("エラー" + message)
-                    logger.info(message)
+                    logger.info(message.replace("\n",""))
                     return
                 i += 1
 
@@ -167,6 +175,7 @@ class Application(tk.Frame):
         '''エラーメッセージ表示'''
         msg = "エラーが発生しました。\n" + str(message)
         mbox.showerror("Error!", msg)
+        logger.info(message)
 
     def folder_dialog(self,obj):
         '''フォルダ選択ダイアログの起動'''
@@ -190,12 +199,12 @@ parser = argparse.ArgumentParser(description="ファイルをフォルダごと�
 # オプション引数
 parser.add_argument('--all', action = 'store_true', help="登録している全てのアイテムのコピーが実行されます。")
 parser.add_argument('--copy', nargs='*', type = str, help="コピー処理実行対象を複数指定できます。Ex)--copy red blue yellow")
-#parser.add_argument('--log', type = str, help="処理結果のテキストファイルを出力したい場合は出力先フォルダを指定してください。")
+parser.add_argument('--log', type = str, help="処理結果のテキストを出力したい場合はパスを指定してください。デフォルトは.exeと同階層です。")
 args = parser.parse_args()
 if args.copy != None:
     logger.info("実行対象アイテム")
     for i in args.copy:
-        logger.info('>',i)
+        logger.info('>' + i)
 # endregion
 
 # 引数がない場合はGUI起動
