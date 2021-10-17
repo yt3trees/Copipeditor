@@ -33,7 +33,7 @@ class CopyProcess:
             for item in selected_items:
                 items += item + " "
             logger.info(">>コピー処理を開始します。")
-            logger.info("■実行対象:" + items)
+            logger.info(">>実行対象:" + items)
 
             x = 0
             for item in selected_items:
@@ -52,7 +52,6 @@ class CopyProcess:
 
                 if os.path.exists(fromPath[x]):
                     searchPath = fromPath[x] + "/**/*"
-                    i = []
                     files = ([p for p in glob.glob(searchPath, recursive=True)
                         if os.path.isfile(p)]) # コピー元ファイル一覧取得
 
@@ -72,20 +71,22 @@ class CopyProcess:
                                 shutil.copy2(toFile, logFolderNowToFile)
                                 logger.info("コピー先重複ファイルを"+logFolderNowToFile+"にバックアップしました。")
 
-                    if bkFlg == True:
+                    if bkFlg == True and files:
                         dir_util.copy_tree(fromPath[x], logFolderNowFrom) # コピー元ファイルをバックアップフォルダにコピー
                         logger.info("")
                         logger.info(">>コピー元ファイルをバックアップしました。" + fromPath[x] + " -> " + logFolderNowFrom)
 
                     dir_util.copy_tree(fromPath[x], toPath[x])
                     logger.info("")
-                    logger.info(">>ファイルをコピーしました。" + fromPath[x] + " -> " + toPath[x])
+                    if files:
+                        logger.info(">>ファイルをコピーしました。" + fromPath[x] + " -> " + toPath[x])
 
                     if delFlg == True: # コピー元削除チェックボックスがオンの場合
                         self.delete_from_files(fromPath[x])
+                        logger.info("")
                         logger.info(">>コピー元ファイルを削除しました。")
                     if not files:
-                        logger.info("コピー元にファイルが存在していません。")
+                        logger.info(">>コピー元にファイルが存在していません。")
 
                     dir_util._path_created = {} # キャッシュをクリア
                     x += 1
@@ -95,7 +96,7 @@ class CopyProcess:
                     x += 1
                     return "break"
             self.progress_bar("stop") # プログレスバー終了
-            mbox.showinfo("アラート", "処理完了しました。")
+            # mbox.showinfo("アラート", "処理完了しました。")
             logger.info("----------")
             logger.info(">>処理が完了しました。\n")
         except Exception as e:

@@ -33,8 +33,9 @@ class JsonOperation:
         except Exception as e:
             e = "jsonファイルの読み込みに失敗しました。\n" + str(e)
             logger.info(e)
-            obj.error_message(e)
-            obj.master.destroy()
+            if obj != '':
+                obj.error_message(e)
+                obj.master.destroy()
 
     def save_json(self, dict:dict, jsonfile:str, ind:int, ascii:bool):
         '''

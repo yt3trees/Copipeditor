@@ -7,7 +7,6 @@ from tkinter import filedialog
 from typing import Text
 import datetime
 import threading
-import argparse
 from logging import getLogger, StreamHandler, FileHandler, basicConfig, DEBUG, INFO
 
 from components import Global
@@ -17,26 +16,32 @@ from components import TreeOperation
 from components import CopyProcess
 from components import Menu
 from components import Shortcut
+from components import CommandLine
 
-# ログファイルの日付が今日でない場合はクリア
-with open("log.txt") as f:
-    lines = f.read()
-    textDate = lines[0:10]
-if str(datetime.date.today()) != str(textDate):
-    with open("log.txt", "w") as f: pass
+if len(sys.argv) <= 1: # GUI実行時の出力結果テキスト指定
+    resultPath = os.path.dirname(sys.argv[0])
+    resultText = resultPath + "./result.txt"
+else:
+    # コマンドライン実行インタンス生成、出力結果テキスト指定
+    cl = CommandLine.CommandLine()
+    resultText = cl.get_result()
 
 # ロギング
-with open("log.txt", 'a') as f: print(str(datetime.date.today()) + " " + str(datetime.datetime.now().time())[0:5], file = f)
 logger = getLogger(__name__)
 stream_handler = StreamHandler()
 stream_handler.setLevel(INFO)
-file_handler = FileHandler('log.txt')
+file_handler = FileHandler(resultText)
 file_handler.setLevel(INFO)
 logger.setLevel(INFO)
 logger.addHandler(stream_handler)
 logger.addHandler(file_handler)
 logger.propagate = False
 basicConfig(level = DEBUG, handlers = [stream_handler, file_handler])
+
+# コピー実行
+if len(sys.argv) >= 2:
+    cl.file_operation()
+    cl.copy_command()
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -74,6 +79,8 @@ class Application(tk.Frame):
 
     def copy_callback(self):
         '''exec_copyを別スレッドで実行するための関数'''
+        # 実行結果テキスト
+        with open(resultText, 'w') as f: print(str(datetime.date.today()) + " " + str(datetime.datetime.now().time())[0:5], file = f)
         thread = threading.Thread(target=self.exec_copy)
         thread.start() # ここで止まらずすぐに呼び出し元にreturnする
         return "break"
@@ -132,6 +139,7 @@ class Application(tk.Frame):
                 # コピー処理実行
                 cp = CopyProcess.CopyProcess()
                 cp.exec_copy(id, fromPath, toPath, logFolderNow, bkFlg, delFlg)
+                mbox.showinfo("アラート", "処理完了しました。")
             else:
                 return "break"
             return "break"
@@ -189,23 +197,6 @@ class Application(tk.Frame):
             return "break"
         except Exception as e:
             self.error_message(e)
-
-# endregion
-
-# regionコマンド実行
-# オブジェクト生成
-parser = argparse.ArgumentParser(description="ファイルをフォルダごとコピーするプログラムです。\
-                                    コマンドライン引数を渡さずに実行した場合はGUIが起動します。")
-# オプション引数
-parser.add_argument('--all', action = 'store_true', help="登録している全てのアイテムのコピーが実行されます。")
-parser.add_argument('--copy', nargs='*', type = str, help="コピー処理実行対象を複数指定できます。Ex)--copy red blue yellow")
-parser.add_argument('--log', type = str, help="処理結果のテキストを出力したい場合はパスを指定してください。デフォルトは.exeと同階層です。")
-args = parser.parse_args()
-if args.copy != None:
-    logger.info("実行対象アイテム")
-    for i in args.copy:
-        logger.info('>' + i)
-# endregion
 
 # 引数がない場合はGUI起動
 if len(sys.argv) <= 1:

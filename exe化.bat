@@ -20,4 +20,3 @@ if exist .\app\Copipeditor\script (
     echo 新規でコピーします。
     echo D | xcopy .\script .\app\Copipeditor\script /S
 )
-pause

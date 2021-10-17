@@ -13,7 +13,7 @@ class TreeOperation:
         while True: # breakするまで永遠ループ
             logger.info(">>",m,"ループ処理開始")
             for item in obj.get_children():
-                logger.info('候補:' + i + '重複チェック先:' + obj.item(item)['text'])
+                logger.info('候補:' + str(i) + '重複チェック先:' + str(obj.item(item)['text']))
                 if i == obj.item(item)['text']: # IDが重複しているかチェック
                     logger.info("iid一致データあり\n")
                     i = i + 1 # 重複した場合は
@@ -22,7 +22,7 @@ class TreeOperation:
                 m = ""
             if m == "":
                 break
-        logger.info("ID:「" + i + "」で作成しました。")
+        logger.info("ID:「" + str(i) + "」で作成しました。")
         obj.insert("", "end", iid=i, text=i, value=("","",""))
         return "break"
 
