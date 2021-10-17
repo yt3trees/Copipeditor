@@ -18,11 +18,12 @@ from components import Menu
 from components import Shortcut
 from components import CommandLine
 
-if len(sys.argv) <= 1: # GUI実行時の出力結果テキスト指定
+# GUI実行時の出力結果テキスト指定
+if len(sys.argv) <= 1:
     resultPath = os.path.dirname(sys.argv[0])
     resultText = resultPath + "./result.txt"
+# コマンドライン実行インタンス生成、出力結果テキスト指定
 else:
-    # コマンドライン実行インタンス生成、出力結果テキスト指定
     cl = CommandLine.CommandLine()
     resultText = cl.get_result()
 

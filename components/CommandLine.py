@@ -12,6 +12,9 @@ logger = getLogger(__name__)
 
 class CommandLine:
     def __init__(self):
+        '''
+        コマンドライン引数受付
+        '''
         # オブジェクト生成
         parser = argparse.ArgumentParser(description="ファイルをフォルダごとコピーするプログラムです。\
                                             コマンドライン引数を渡さずに実行した場合はGUIが起動します。", exit_on_error=False)
@@ -24,6 +27,9 @@ class CommandLine:
         self.args = parser.parse_args()
 
     def get_result(self):
+        '''
+        result.txtの場所指定
+        '''
         # --logに引数がある場合は結果出力テキストボックスの場所を指定
         if self.args.log:
             if not os.path.exists(self.args.log):
@@ -43,6 +49,9 @@ class CommandLine:
         return resultText
 
     def file_operation(self):
+        '''
+        ファイル操作
+        '''
         try:
             self.bkFlg = self.args.bk
             self.delFlg = self.args.mv
@@ -142,6 +151,9 @@ class CommandLine:
             sys.exit()
 
     def copy_command(self):
+        '''
+        コピー実行
+        '''
         today = str(datetime.date.today()).replace("-", "") # yyyymmdd
         time = str(datetime.datetime.now().time())[0:6].replace(":","")
         dateNow = today + time
