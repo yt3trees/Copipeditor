@@ -44,7 +44,7 @@ class Menu:
         helpMenu.add_command(label="バージョン情報", command = lambda : self.open_version(obj))
 
     def open_faq(self):
-        return
+        self.link_open('https://yt3trees.github.io/Copipeditor/')
 
     def open_version(self, obj):
         obj.winv = tk.Toplevel()
@@ -75,7 +75,7 @@ class Menu:
         obj.label2 = tk.Label(obj.winv, font=("MSゴシック", "11"), text = versionInfo, justify='left')
         obj.label2.grid(row= 1 , column = 1, sticky = "NW")
         obj.labelSource2 = tk.Label(obj.winv, font=("MSゴシック", "11"), text = versionInfo2, justify='left')
-        obj.labelSource2.bind("<Button-1>", lambda e: self.link_open())
+        obj.labelSource2.bind("<Button-1>", lambda e: self.link_open(Global.SOURCE))
         obj.labelSource2.grid(row= 2 , column = 1, sticky = "NW")
         obj.labelPython = tk.Label(obj.winv, font=("MSゴシック", "11"), text = versionInfo3, justify='left')
         obj.labelPython.grid(row= 3 , column = 1, sticky = "NW")
@@ -87,10 +87,10 @@ class Menu:
         shortcut = Shortcut.Shortcut()
         shortcut.define("menu", obj)
 
-    def link_open(self):
-        msbox = mbox.askokcancel("確認", "ブラウザでリンクを開きます。\r\n" + Global.SOURCE)
+    def link_open(self, url):
+        msbox = mbox.askokcancel("確認", "ブラウザでリンクを開きます。\r\n" + url)
         if msbox == True:
-            webbrowser.open(Global.SOURCE)
+            webbrowser.open(url)
 
     def add_startmenu(obj):
         '''スタートメニューにアプリを追加'''
