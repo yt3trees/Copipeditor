@@ -30,7 +30,7 @@ twitter_username: yt3trees
 github_username:  yt3trees
 
 # Build settings
-theme: minima
+theme: jekyll-theme-minimal
 plugins:
   - jekyll-feed
 
