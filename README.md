@@ -1,100 +1,76 @@
-# jekyll-rtd-theme
+# Welcome to Copipeditor!
+Copipeditor(コピペディター)は定期的に繰り返し行うコピペ作業をサポートするアプリです。
 
+<!--
 ![CI](https://github.com/rundocs/jekyll-rtd-theme/workflows/CI/badge.svg?branch=develop)
 ![jsDelivr](https://data.jsdelivr.com/v1/package/gh/rundocs/jekyll-rtd-theme/badge)
+-->
 
-Just another documentation theme compatible with GitHub Pages
+## できること
 
-## What it does?
+### 1. GUIから一括でフォルダからフォルダへのコピー処理を実行
+GUIでコピーしたいフォルダのパスを登録し、Copipeditor上で実行することができます。
 
-This theme is inspired by [sphinx-rtd-theme](https://github.com/readthedocs/sphinx_rtd_theme) and refactored with:
+複数コピー処理を一括で行うことも可能です。
 
-- [@primer/css](https://github.com/primer/css)
-- [github-pages](https://github.com/github/pages-gem) ([dependency versions](https://pages.github.com/versions/))
+![コピー実行](image/exec_copy_gui.gif)
 
-## Quick start
+### 2. コマンドラインから実行
+Copipeditorはコマンドライン引数を渡すことでコピーを実行することができます。
 
-```yml
-remote_theme: rundocs/jekyll-rtd-theme
+バッチファイルで実行できるため、タスクスケジューラ等を用いることで時間指定や定期的なコピー処理を行えます。
+
+引数については[説明ページ](https://yt3trees.github.io/Copipeditor/documentation/commandline.html)をご確認ください。
+
+![コマンドライン実行](image/commandline_movie.gif)
+
+### 3. コピー時の重複ファイルを別フォルダにバックアップ
+コピー先に同じ名前のファイルが存在する場合は別フォルダにバックアップした上で上書きします。
+
+### 4. 実行結果をテキストファイルとして出力
+コピー処理の結果をテキストファイルとして出力します。
+```
+yyyy-mm-dd hh:mm
+INFO:components.CopyProcess:>>コピー処理を開始します。
+INFO:components.CopyProcess:>>実行対象:テスト1
+INFO:components.CopyProcess:----------
+INFO:components.CopyProcess:■処理アイテム:テスト1
+INFO:components.CopyProcess:
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/from\test01.txtから
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/to\test01.txtにコピーします。
+INFO:components.CopyProcess:コピー先重複ファイルをC:/work/dev/python/テスト/!bk/yyyymmddhhmm_テスト1/Before/test01.txtにバックアップしました。
+INFO:components.CopyProcess:
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/from\test02.txtから
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/to\test02.txtにコピーします。
+INFO:components.CopyProcess:
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/from\test03.txtから
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/to\test03.txtにコピーします。
+INFO:components.CopyProcess:
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/from\test04.txtから
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/to\test04.txtにコピーします。
+INFO:components.CopyProcess:
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/from\test\test04.txtから
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/to\test\test04.txtにコピーします。
+INFO:components.CopyProcess:
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/from\test\test05.txtから
+INFO:components.CopyProcess:C:/work/dev/python/テスト/test/to\test\test05.txtにコピーします。
+INFO:components.CopyProcess:
+INFO:components.CopyProcess:>>コピー元ファイルをバックアップしました。C:/work/dev/python/テスト/test/from -> C:/work/dev/python/テスト/!bk/yyyymmddhhmm_テスト1/After
+INFO:components.CopyProcess:
+INFO:components.CopyProcess:>>ファイルをコピーしました。C:/work/dev/python/テスト/test/from -> C:/work/dev/python/テスト/test/to
+INFO:components.CopyProcess:----------
+INFO:components.CopyProcess:>>処理が完了しました。
 ```
 
-You can [generate](https://github.com/rundocs/starter-slim/generate) with the same files and folders from [rundocs/starter-slim](https://github.com/rundocs/starter-slim/)
 
-## Usage
+## ダウンロード
 
-Documentation that can guide how to create with Github pages, please refer to [rundocs.io](https://rundocs.io) for details
+下記リンクからzipをダウンロードできます。
 
-## Features
+[Releases](https://github.com/yt3trees/Copipeditor/releases)
 
-- Shortcodes (Toasts card, mermaid)
-- Pages Plugins (emoji, gist, avatar, mentions)
-- Auto generate sidebar
-- [Attribute List Definitions](https://kramdown.gettalong.org/syntax.html#attribute-list-definitions) (Primer/css utilities, Font Awesome 4)
-- Service worker (caches)
-- SEO (404, robots.txt, sitemap.xml)
-- Canonical Link (Open Graph, Twitter Card, Schema data)
+インストール不要です。デスクトップや`C:\Program Files`等お好みの場所においてご使用ください。
 
-## Options
-
-| name          | default value        | description       |
-| ------------- | -------------------- | ----------------- |
-| `title`       | repo name            |                   |
-| `description` | repo description     |                   |
-| `url`         | user domain or cname |                   |
-| `baseurl`     | repo name            |                   |
-| `lang`        | `en`                 |                   |
-| `direction`   | `auto`               | `ltr` or `rtl`    |
-| `highlighter` | `rouge`              | Cannot be changed |
-
-```yml
-# folders sort
-readme_index:
-  with_frontmatter: true
-
-meta:
-  key1: value1
-  key2: value2
-  .
-  .
-  .
-
-google:
-  gtag:
-  adsense:
-
-mathjax: # this will prased to json, default: {}
-
-mermaid:
-  custom:     # mermaid link
-  initialize: # this will prased to json, default: {}
-
-scss:   # also _includes/extra/styles.scss
-script: # also _includes/extra/script.js
-
-translate:
-  # shortcodes
-  danger:
-  note:
-  tip:
-  warning:
-  # 404
-  not_found:
-  # copyright
-  revision:
-  # search
-  searching:
-  search:
-  search_docs:
-  search_results:
-  search_results_found: # the "#" in this translate will replaced with results size!
-  search_results_not_found:
-
-plugins:
-  - jemoji
-  - jekyll-avatar
-  - jekyll-mentions
-```
-
-## The license
+## License
 
 The theme is available as open source under the terms of the MIT License

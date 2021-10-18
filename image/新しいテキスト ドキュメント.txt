@@ -1,0 +1,11 @@
+1. exeをダブルクリックして起動
+![起動](image/window_open.png)
+
+2. 追加ボタンからアイテムを追加し、IDとコピー元フォルダパス、コピー先フォルダパスを入力
+![メインウィンドウ](image/main_window.png)
+
+3. コピー処理対象のアイテムのチェックボックスにチェックを入れ、実行ボタンを押下
+![メインウィンドウ](image/check_item.png)
+
+4. コピー処理実行
+![コピー実行](image/exec_copy_console.png)
