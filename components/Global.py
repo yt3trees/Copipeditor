@@ -8,7 +8,12 @@ from logging import getLogger, StreamHandler, DEBUG, FileHandler
 logger = getLogger(__name__)
 
 VERSION = "v1.0"
-PARAM = os.path.dirname(sys.argv[0]) + "\param.json"
+
+if os.path.dirname(sys.argv[0]) != '':
+    os.chdir(os.path.dirname(sys.argv[0]))
+scriptPath =os.getcwd()
+
+PARAM = scriptPath + "\param.json"
 SOURCE = "https://github.com/yt3trees/Copipeditor"
 btColorOk = "#83ccd2"
 btColorDel = "#f6bfbc"
