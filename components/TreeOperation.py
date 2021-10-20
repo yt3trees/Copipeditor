@@ -9,20 +9,20 @@ class TreeOperation:
         i = 0
         m = ""
         num = len(obj.get_children()) # 全アイテム数
-        logger.info("-----")
+        # logger.info("-----")
         while True: # breakするまで永遠ループ
-            logger.info(">>",m,"ループ処理開始")
+            # logger.info(">>" + m + "ループ処理開始")
             for item in obj.get_children():
-                logger.info('候補:' + str(i) + '重複チェック先:' + str(obj.item(item)['text']))
+                # logger.info('候補:' + str(i) + '重複チェック先:' + str(obj.item(item)['text']))
                 if i == obj.item(item)['text']: # IDが重複しているかチェック
-                    logger.info("iid一致データあり\n")
+                    # logger.info("iid一致データあり\n")
                     i = i + 1 # 重複した場合は
                     m = "再"
                     break
                 m = ""
             if m == "":
                 break
-        logger.info("ID:「" + str(i) + "」で作成しました。")
+        # logger.info("ID:「" + str(i) + "」で作成しました。")
         obj.insert("", "end", iid=i, text=i, value=("","",""))
         return "break"
 

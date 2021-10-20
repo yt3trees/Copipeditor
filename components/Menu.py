@@ -96,6 +96,7 @@ class Menu:
         '''スタートメニューにアプリを追加'''
         try:
             cmdFile = os.path.dirname(sys.argv[0]) + "/script/run_スタートメニューに追加.bat"
+            cmdFile = cmdFile.replace(' ','" "') # パスが空白が含まれている場合はエスケープ
             logger.info(cmdFile)
             os.system(cmdFile)
         except Exception as e:
