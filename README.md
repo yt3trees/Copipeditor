@@ -1,6 +1,8 @@
 # Copipeditor
 Copipeditor(コピペディター)は定型的なコピペ作業をサポートするアプリです。
-![メインウィンドウ](image/main_window.png)
+
+
+<img src="image/main_window.png" width=80%>
 
 ## できること
 1. GUIから一括でフォルダからフォルダへのコピー処理を実行
