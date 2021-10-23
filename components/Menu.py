@@ -40,8 +40,8 @@ class Menu:
         # ヘルプタブ
         helpMenu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="ヘルプ", menu=helpMenu)
-        helpMenu.add_command(label="FAQ", command=self.open_faq)
         helpMenu.add_command(label="バージョン情報", command = lambda : self.open_version(obj))
+        helpMenu.add_command(label="Copipeditor Website", command=self.open_faq)
 
     def open_faq(self):
         self.link_open('https://yt3trees.github.io/Copipeditor/')
