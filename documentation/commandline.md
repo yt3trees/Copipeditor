@@ -24,3 +24,9 @@ Copipeditorではオプション引数のみを受け付けます。
   - `Copipeditor.exe --all --bk --mv`
 - ID'test1'のコピーを実行してその結果のログテキストの出力先をデスクトップにある'work'フォルダにする
   - `Copipeditor.exe --cp test1 --log %USERPROFILE%\desktop\work`
+
+```tip
+タスクスケジューラからも実行可能です。batファイルを作成し、それをタスクスケジューラから実行でもOKです。
+
+![タスクスケジューラ](../image/task.png)
+```

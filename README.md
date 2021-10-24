@@ -1,5 +1,5 @@
 # Welcome to Copipeditor!
-Copipeditor(コピペディター)は定期的に繰り返し行うコピペ作業をサポートするアプリです。
+Copipeditor(コピペディター)は定型的なコピペ作業をサポートするアプリです。
 
 <!--
 ![CI](https://github.com/rundocs/jekyll-rtd-theme/workflows/CI/badge.svg?branch=develop)
