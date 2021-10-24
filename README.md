@@ -70,7 +70,3 @@ INFO:components.CopyProcess:>>処理が完了しました。
 [Releases](https://github.com/yt3trees/Copipeditor/releases)
 
 インストール不要です。デスクトップや`C:\Program Files`等お好みの場所においてご使用ください。
-
-## License
-
-The theme is available as open source under the terms of the MIT License
