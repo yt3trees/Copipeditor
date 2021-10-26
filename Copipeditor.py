@@ -120,7 +120,7 @@ class Application(tk.Frame):
                     return
                 if not os.path.exists(toPath[i]):
                     message = "パス'" + toPath[i] + "'は存在しません。\n処理を中止します。"
-                    mbox.showerror("エラー" + message)
+                    mbox.showerror("エラー", message)
                     logger.info(message.replace("\n",""))
                     return
                 i += 1

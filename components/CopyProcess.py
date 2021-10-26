@@ -109,9 +109,10 @@ class CopyProcess:
         if len(sys.argv) <= 1: # GUI実行の場合のみプログレスバー生成
             if param == "start":
                 self.winbar = tk.Toplevel()
-                lw = 200
-                lh = 45
-                self.winbar.geometry(str(lw)+"x"+str(lh)+"+"+str(int(Global.ww/2-lw/2-10))+"+"+str(int(Global.wh/2-lh/2-15)))
+                # lw = 200
+                # lh = 45
+                ww = self.winbar.winfo_screenwidth()
+                wh = self.winbar.winfo_screenheight()
                 self.winbar.title("コピー中")
                 self.winbar.attributes("-toolwindow", True)
                 self.winbar.grab_set()
@@ -120,7 +121,12 @@ class CopyProcess:
                 self.winbar.Lbl.pack()
                 self.winbar.pb = ttk.Progressbar(self.winbar, mode="indeterminate",length="180") #非確定的モード
                 self.winbar.pb.start()
-                self.winbar.pb.pack()
+                self.winbar.pb.pack(padx = 10, pady = 10)
+
+                self.winbar.update_idletasks()
+                lw = self.winbar.winfo_width()
+                lh = self.winbar.winfo_height()
+                self.winbar.geometry("+"+str(int(ww/2-lw/2))+"+"+str(int(wh/2-lh/2)))
                 return self.winbar.pb
 
             elif param == "stop":
