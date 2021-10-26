@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import tkinter.font as font
 from tkinter import messagebox as mbox
 import os
 import sys
@@ -8,6 +9,12 @@ from typing import Text
 import datetime
 import threading
 from logging import getLogger, StreamHandler, FileHandler, basicConfig, DEBUG, INFO
+
+import ctypes
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(True)
+except:
+    pass
 
 from components import Global
 from components import MainWindow
@@ -55,16 +62,15 @@ class Application(tk.Frame):
         tk.Frame.__init__(self, master)
         self.pack(expand=1, fill=tk.BOTH, anchor=tk.NW)
         self.master.title("Copipeditor")
-        Global.ww = self.master.winfo_screenwidth()
-        Global.wh = self.master.winfo_screenheight()
-        lw = 750 # self.master.winfo_width()
-        lh = 314 # self.master.winfo_height()
-        self.master.geometry(str(lw)+"x"+str(lh)+"+"+str(int(Global.ww/2-lw/2-10))+"+"+str(int(Global.wh/2-lh/2-15)) )
+        self.ww = self.master.winfo_screenwidth()
+        self.wh = self.master.winfo_screenheight()
         self.master.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(data=Global.ICON))
 
+        self.deffont = font.Font(self,family="Yu Gothic UI",size=9)
+
         self.win = None # サブメニュー重複対策
-        self.mainWin = MainWindow.MainWindow(self) # メインウィンドウ生成
         self.menu.create_menu(self)
+        self.mainWin = MainWindow.MainWindow(self) # メインウィンドウ生成
 
         # jsonファイル読み込み
         self.jsonOpe = Global.JsonOperation()
@@ -202,5 +208,7 @@ class Application(tk.Frame):
 # 引数がない場合はGUI起動
 if len(sys.argv) <= 1:
     root = tk.Tk()
+    root.attributes('-alpha', 0.0) # ウィンドウちらつき対策 1度目の生成を透明化
     app = Application(master=root)
+    root.attributes('-alpha', 1.0) # 完全にウィンドウ生成完了したらアクティブ化
     app.mainloop()

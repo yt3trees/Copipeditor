@@ -14,17 +14,17 @@ logger = getLogger(__name__)
 class Menu:
     def create_menu(self, obj):
         # メニュー
-        menubar = tk.Menu(obj)
+        menubar = tk.Menu(obj, font = obj.deffont)
         obj.master.config(menu=menubar)
         # ファイルタブ
-        fileMenu = tk.Menu(menubar, tearoff=0)
+        fileMenu = tk.Menu(menubar, tearoff=0, font = obj.deffont)
         menubar.add_cascade(label="ファイル", menu=fileMenu)
         fileMenu.add_command(label="保存", command = obj.save_item, accelerator="Ctrl+S")
         fileMenu.add_command(label="スタートメニューに追加", command = self.add_startmenu)
         fileMenu.add_separator()
         fileMenu.add_command(label="終了", command = lambda : obj.master.destroy(), accelerator="Alt+F4")
         # 編集タブ
-        editMenu = tk.Menu(menubar, tearoff=0)
+        editMenu = tk.Menu(menubar, tearoff=0, font = obj.deffont)
         menubar.add_cascade(label="編集", menu=editMenu)
         editMenu.add_command(label="追加", command = lambda : obj.treeOpe.insert_tree(obj.tree), accelerator="Ctrl+N")
         editMenu.add_command(label="削除", command = lambda : obj.treeOpe.delete_item(obj.tree), accelerator="Delete")
@@ -34,11 +34,11 @@ class Menu:
         editMenu.add_command(label="上に複製", command = lambda : obj.treeOpe.copy_item(obj.tree, "up"), accelerator="Shift+Alt+K")
         editMenu.add_command(label="下に複製", command = lambda : obj.treeOpe.copy_item(obj.tree, "down"), accelerator="Shift+Alt+J")
         # 実行タブ
-        execMenu = tk.Menu(menubar, tearoff=0)
+        execMenu = tk.Menu(menubar, tearoff=0, font = obj.deffont)
         menubar.add_cascade(label="実行", menu=execMenu)
         execMenu.add_command(label="コピー処理実行", command = lambda : obj.copy_callback(), accelerator="F5")
         # ヘルプタブ
-        helpMenu = tk.Menu(menubar, tearoff=0)
+        helpMenu = tk.Menu(menubar, tearoff=0, font = obj.deffont)
         menubar.add_cascade(label="ヘルプ", menu=helpMenu)
         helpMenu.add_command(label="バージョン情報", command = lambda : self.open_version(obj))
         helpMenu.add_command(label="Copipeditor Website", command=self.open_faq)
@@ -48,20 +48,21 @@ class Menu:
 
     def open_version(self, obj):
         obj.winv = tk.Toplevel()
-        lw = 430
-        lh = 150
-        obj.winv.geometry(str(lw)+"x"+str(lh)+"+"+str(int(Global.ww/2-lw/2-10))+"+"+str(int(Global.wh/2-lh/2-15)))
+        # lw = 430
+        # lh = 160
+        # obj.winv.geometry("+"+str(int(Global.ww/2-lw/2-10))+"+"+str(int(Global.wh/2-lh/2-15)))
         #obj.winv.geometry("400x150+975+575")
         obj.winv.title("バージョン情報")
         obj.winv.grab_set()
         obj.winv.attributes("-toolwindow", True)
+        # obj.winv.configure("",font = obj.deffont)
         obj.winv.focus_set()
 
         # アイコン
         obj.img = tk.PhotoImage(data = Global.ICON)
         obj.img = obj.img.subsample(6, 6) # 縮小
         obj.canvas = tk.Canvas(obj.winv, width = 90, height = 90)
-        obj.canvas.grid(row= 0 , column = 0, rowspan=10)
+        obj.canvas.grid(row= 0 , column = 0, rowspan = 10, sticky = "N")
         obj.canvas.create_image(0 , 0, image = obj.img, anchor = tk.NW)
 
         # ツール情報
@@ -81,11 +82,17 @@ class Menu:
         obj.labelPython.grid(row= 3 , column = 1, sticky = "NW")
         obj.okButt = tk.Button(obj.winv, text = "OK", width=10)
         obj.okButt.bind("<Button-1>", lambda c: obj.winv.destroy())
-        obj.okButt.place(x = 175, y = 120)
+        obj.okButt.grid(row= 4 , column = 1, sticky = "NE")
+        # obj.okButt.place(x = 175, y = 120)
 
         # ショートカット
         shortcut = Shortcut.Shortcut()
         shortcut.define("menu", obj)
+
+        obj.winv.update_idletasks()
+        lw = obj.winv.winfo_width()
+        lh = obj.winv.winfo_height()
+        obj.winv.geometry("+"+str(int(obj.ww/2-lw/2))+"+"+str(int(obj.wh/2-lh/2)))
 
     def link_open(self, url):
         msbox = mbox.askokcancel("確認", "ブラウザでリンクを開きます。\r\n" + url)

@@ -14,7 +14,7 @@ class TreeOperation:
             # logger.info(">>" + m + "ループ処理開始")
             for item in obj.get_children():
                 # logger.info('候補:' + str(i) + '重複チェック先:' + str(obj.item(item)['text']))
-                if i == obj.item(item)['text']: # IDが重複しているかチェック
+                if str(i) == str(obj.item(item)['text']): # IDが重複しているかチェック
                     # logger.info("iid一致データあり\n")
                     i = i + 1 # 重複した場合は
                     m = "再"
