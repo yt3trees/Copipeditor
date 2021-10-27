@@ -72,7 +72,7 @@ class CommandLine:
                     logger.info('--cpに値は必須です。')
                     sys.exit()
 
-            # jsonファイル読み込みとコピー実行
+            # jsonファイル読み込み
             jsonOpe = Global.JsonOperation()
             if os.path.exists(Global.PARAM):
                 jsonValues = jsonOpe.load_json('')

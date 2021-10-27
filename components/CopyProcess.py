@@ -82,7 +82,7 @@ class CopyProcess:
                         logger.info(">>ファイルをコピーしました。" + fromPath[x] + " -> " + toPath[x])
 
                     if delFlg == True: # コピー元削除チェックボックスがオンの場合
-                        self.delete_from_files(fromPath[x])
+                        self.delete_from_files(files)
                         logger.info("")
                         logger.info(">>コピー元ファイルを削除しました。")
                     if not files:
@@ -134,9 +134,9 @@ class CopyProcess:
         else:
             pass
 
-    def delete_from_files(self, path):
-        shutil.rmtree(path)
-        os.mkdir(path)
+    def delete_from_files(self, files):
+        for file in files: # フォルダは維持
+            os.remove(file)
         return "break"
 
     def error_message(self, message):

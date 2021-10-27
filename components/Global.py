@@ -7,7 +7,7 @@ import json
 from logging import getLogger, StreamHandler, DEBUG, FileHandler
 logger = getLogger(__name__)
 
-VERSION = "v1.0"
+VERSION = "v1.1.0"
 
 if os.path.dirname(sys.argv[0]) != '':
     os.chdir(os.path.dirname(sys.argv[0]))

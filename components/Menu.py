@@ -20,7 +20,7 @@ class Menu:
         fileMenu = tk.Menu(menubar, tearoff=0, font = obj.deffont)
         menubar.add_cascade(label="ファイル", menu=fileMenu)
         fileMenu.add_command(label="保存", command = obj.save_item, accelerator="Ctrl+S")
-        fileMenu.add_command(label="スタートメニューに追加", command = self.add_startmenu)
+        # fileMenu.add_command(label="スタートメニューに追加", command = self.add_startmenu)
         fileMenu.add_separator()
         fileMenu.add_command(label="終了", command = lambda : obj.master.destroy(), accelerator="Alt+F4")
         # 編集タブ
@@ -28,7 +28,7 @@ class Menu:
         menubar.add_cascade(label="編集", menu=editMenu)
         editMenu.add_command(label="追加", command = lambda : obj.treeOpe.insert_tree(obj.tree), accelerator="Ctrl+N")
         editMenu.add_command(label="削除", command = lambda : obj.treeOpe.delete_item(obj.tree), accelerator="Delete")
-        editMenu.add_command(label="全選択", command = lambda : obj.treeOpe.all_select_item(obj.tree), accelerator="Ctrl+A")
+        editMenu.add_command(label="全選択/全解除", command = lambda : obj.treeOpe.all_select_item(obj.tree), accelerator="Ctrl+A")
         editMenu.add_command(label="上と並び替え", command = lambda : obj.treeOpe.move_up_item(obj.tree,"up"), accelerator="K")
         editMenu.add_command(label="下と並び替え", command = lambda : obj.treeOpe.move_up_item(obj.tree,"down"), accelerator="J")
         editMenu.add_command(label="上に複製", command = lambda : obj.treeOpe.copy_item(obj.tree, "up"), accelerator="Shift+Alt+K")
