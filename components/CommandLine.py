@@ -118,7 +118,6 @@ class CommandLine:
                                 x += 1
                     logger.info('---------+----------------------------')
                     if s < len(self.args.cp):
-                        logger.info(s)
                         logger.info('指定したアイテムが存在しません。処理を中止します。')
                         sys.exit()
 
