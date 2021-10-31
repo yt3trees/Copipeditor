@@ -123,6 +123,11 @@ class Application(tk.Frame):
                     mbox.showerror("エラー", message)
                     logger.info(message.replace("\n",""))
                     return
+                if not os.path.exists(self.bkEnt.get()):
+                    message = "パス'" + self.bkEnt.get() + "'は存在しません。\n処理を中止します。"
+                    mbox.showerror("エラー", message)
+                    logger.info(message.replace("\n",""))
+                    return
                 i += 1
 
             # コピー元削除チェックボックスがオンの場合に確認ダイアログのメッセージ追加

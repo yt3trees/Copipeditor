@@ -101,6 +101,7 @@ class CommandLine:
                     logger.info('---------+----------------------------')
                     logger.info('比較結果\t指定アイテム  \t登録済みアイテム')
                     logger.info('---------+----------------------------')
+                    s = 0
                     for i in self.args.cp:
                         x = 1 # 登録済みアイテムリストの添字([0]はバックアップフォルダパス)
                         for sss in items:
@@ -110,11 +111,16 @@ class CommandLine:
                                 self.itemFrom.append(items[x]['from'])
                                 self.itemTo.append(items[x]['to'])
                                 x = 1
+                                s += 1
                                 break
                             else: # 比較不一致の場合は指定IDはそのままで次の登録済みIDに移る
                                 logger.info('不一致\t'+ i + ' -> \t' + items[x]['id'])
                                 x += 1
                     logger.info('---------+----------------------------')
+                    if s < len(self.args.cp):
+                        logger.info(s)
+                        logger.info('指定したアイテムが存在しません。処理を中止します。')
+                        sys.exit()
 
                 # --allの場合
                 if self.args.all:
@@ -129,11 +135,11 @@ class CommandLine:
                 if self.args.all:
                     x = 1
                     for i in self.itemId:
-                        logger.info('-' + i + '     \t' + items[x]['from'] + ' -> ' + items[x]['to'])
+                        logger.info(i + '     \t' + items[x]['from'] + ' -> ' + items[x]['to'])
                         x += 1
                 if self.args.cp:
                     for i in self.itemId:
-                        logger.info('-' + i)
+                        logger.info(i)
 
                 for f in self.itemFrom:
                     if not os.path.exists(f):
@@ -143,6 +149,11 @@ class CommandLine:
                 for t in self.itemTo:
                     if not os.path.exists(t):
                         message = "パス'" + t + "'は存在しません。\n処理を中止します。"
+                        logger.info('>>' + message.replace("\n",""))
+                        sys.exit()
+                if self.args.bk:
+                    if not os.path.exists(self.logFolder):
+                        message = "パス'" + self.logFolder + "'は存在しません。\n処理を中止します。"
                         logger.info('>>' + message.replace("\n",""))
                         sys.exit()
 
