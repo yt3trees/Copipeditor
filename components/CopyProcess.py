@@ -74,10 +74,11 @@ class CopyProcess:
                     if bkFlg == True and files:
                         dir_util.copy_tree(fromPath[x], logFolderNowFrom) # コピー元ファイルをバックアップフォルダにコピー
                         # 空フォルダ削除
-                        for root, dirs, files in os.walk(logFolderNowFrom):
-                            for dir in dirs:
-                                if os.listdir(os.path.join(root, dir)) == []:
-                                    os.rmdir(os.path.join(root, dir))
+                        for i in range(10):
+                            for root, dirs, files in os.walk(logFolderNowFrom):
+                                for dir in dirs:
+                                    if os.listdir(os.path.join(root, dir)) == []:
+                                        os.rmdir(os.path.join(root, dir))
                         # 重複ファイルが無い場合はBeforeフォルダを削除
                         try:
                             os.rmdir(logFolderNowTo)
