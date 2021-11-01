@@ -123,7 +123,7 @@ class Application(tk.Frame):
                     mbox.showerror("エラー", message)
                     logger.info(message.replace("\n",""))
                     return
-                if not os.path.exists(self.bkEnt.get()):
+                if not os.path.exists(self.bkEnt.get()) and self.check_v.get() == True:
                     message = "パス'" + self.bkEnt.get() + "'は存在しません。\n処理を中止します。"
                     mbox.showerror("エラー", message)
                     logger.info(message.replace("\n",""))
