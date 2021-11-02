@@ -70,12 +70,11 @@ class CopyProcess:
                                     os.makedirs(os.path.dirname(logFolderNowToFile))
                                 shutil.copy2(toFile, logFolderNowToFile)
                                 logger.info("コピー先重複ファイルを"+logFolderNowToFile+"にバックアップしました。")
-
                     if bkFlg == True and files:
                         dir_util.copy_tree(fromPath[x], logFolderNowFrom) # コピー元ファイルをバックアップフォルダにコピー
                         # 空フォルダ削除
                         for i in range(10):
-                            for root, dirs, files in os.walk(logFolderNowFrom):
+                            for root, dirs, file in os.walk(logFolderNowFrom):
                                 for dir in dirs:
                                     if os.listdir(os.path.join(root, dir)) == []:
                                         os.rmdir(os.path.join(root, dir))
@@ -91,9 +90,7 @@ class CopyProcess:
                     logger.info("")
                     if files:
                         logger.info(">>ファイルをコピーしました。" + fromPath[x] + " -> " + toPath[x])
-
                     if delFlg == True: # コピー元削除チェックボックスがオンの場合
-                        os.chdir(fromPath[x]) # fromフォルダに移動
                         self.delete_from_files(files)
                         logger.info("")
                         logger.info(">>コピー元ファイルを削除しました。")
@@ -113,8 +110,8 @@ class CopyProcess:
             logger.info(">>処理が完了しました。\n")
         except Exception as e:
             self.error_message(e)
-            logger.info("処理を中止しました。")
             logger.info(e)
+            logger.info("処理を中止しました。")
             self.progress_bar("stop") # プログレスバー終了
 
     def progress_bar(self, param):

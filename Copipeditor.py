@@ -157,6 +157,7 @@ class Application(tk.Frame):
             return "break"
 
         except Exception as e:
+            logger.info(e)
             self.error_message(e)
 
     def save_item(self):
